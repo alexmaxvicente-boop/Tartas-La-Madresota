@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tartas La Madresota — Arma tu tarta</title>
+<meta name="description" content="Arma tu tarta de fruta natural y pídela por WhatsApp. Desde $50. Ciudad de México.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tartas La Madresota">
+<meta property="og:description" content="Arma tu tarta de fruta natural y pídela por WhatsApp. Desde $50. CDMX.">
+<meta property="og:image" content="img/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FCE9AB">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%23C42B34'/><circle cx='16' cy='16' r='7' fill='%23FCE9AB'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700;6..96,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: #FCE9AB; color: #C42B34;
+    font-family: "DM Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  a { color: #C42B34; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  img { display: block; }
+
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes spin  { to { transform: rotate(360deg); } }
+  @keyframes bob   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes pop   { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: scale(1); } }
+
+  .page { container-type: inline-size; max-width: 100%; overflow-x: clip; }
+
+  /* ---------- Botones: relleno que avanza de izquierda a derecha ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px; min-height: 54px;
+    padding: 17px 30px; color: #FCE9AB;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    background-color: #C42B34;
+    background-image: linear-gradient(#FC8A2D, #FC8A2D);
+    background-repeat: no-repeat; background-position: left center; background-size: 0% 100%;
+    transition: background-size 340ms cubic-bezier(.2,.85,.2,1), letter-spacing 340ms ease, transform 120ms ease;
+    border: 0;
+  }
+  .btn:hover, .btn:focus-visible { background-size: 100% 100%; letter-spacing: 0.3em; color: #FCE9AB; }
+  .btn:active { transform: translateY(2px); }
+  .btn--sm { min-height: 46px; padding: 12px 16px; font-size: 12px; }
+  .btn--sm:hover, .btn--sm:focus-visible { letter-spacing: 0.26em; }
+
+  /* Botón fantasma: se llena de abajo hacia arriba */
+  .btn-ghost {
+    display: inline-flex; align-items: center; min-height: 54px; padding: 17px 28px;
+    border: 1.5px solid #C42B34; color: #C42B34;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    background-image: linear-gradient(#C42B34, #C42B34);
+    background-repeat: no-repeat; background-position: bottom center; background-size: 100% 0%;
+    transition: background-size 340ms cubic-bezier(.2,.85,.2,1), color 200ms ease 80ms, transform 120ms ease;
+  }
+  .btn-ghost:hover, .btn-ghost:focus-visible { background-size: 100% 100%; color: #FCE9AB; }
+  .btn-ghost:active { transform: translateY(2px); }
+  .btn-ghost--cream {
+    min-height: 46px; padding: 13px 20px; border-color: #FCE9AB; color: #FCE9AB; font-size: 12px;
+    background-image: linear-gradient(#FCE9AB, #FCE9AB);
+    transition: background-size 320ms cubic-bezier(.2,.85,.2,1), color 200ms ease 60ms, transform 120ms ease;
+  }
+  .btn-ghost--cream:hover, .btn-ghost--cream:focus-visible { color: #C42B34; }
+
+  :focus-visible { outline: 3px solid #FC8A2D; outline-offset: 3px; }
+
+  /* ---------- Encabezado ---------- */
+  .header {
+    position: sticky; top: 0; z-index: 50; background: #FCE9AB;
+    padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    border-bottom: 1.5px solid rgba(196,43,52,0.2);
+  }
+  .wordmark {
+    font-family: 'Bodoni Moda', serif; font-weight: 900; font-size: 16px;
+    letter-spacing: 0.22em; text-transform: uppercase; white-space: nowrap; color: #C42B34;
+  }
+
+  /* ---------- Portada ---------- */
+  .hero { padding: 26px 22px 0; position: relative; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase;
+    color: #DC4F7C; margin: 0 0 22px;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px; align-items: center;
+  }
+  .hero h1 {
+    font-family: 'Bodoni Moda', serif; font-weight: 900;
+    font-size: clamp(52px, 12cqw, 130px); line-height: 0.84; letter-spacing: -0.02em;
+    margin: 0; color: #C42B34; text-transform: uppercase;
+  }
+  .hero h2 {
+    font-family: 'Bodoni Moda', serif; font-weight: 400; font-style: italic;
+    font-size: clamp(34px, 8cqw, 86px); line-height: 0.95; margin: 4px 0 18px; color: #DC4F7C;
+  }
+  .hero p.lede {
+    font-size: clamp(17px, 2.2cqw, 21px); line-height: 1.4; margin: 0 0 26px;
+    max-width: 34ch; color: #C42B34; text-wrap: pretty;
+  }
+  .hero .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .round-photo {
+    width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 999px;
+    filter: saturate(1.22) contrast(1.08) brightness(1.04);
+  }
+  .stamp {
+    position: absolute; top: -6px; right: 4%;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 104px; height: 104px; border-radius: 999px; background: #9E9820; color: #FCE9AB;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    text-align: center; line-height: 1.3; animation: spin 22s linear infinite;
+  }
+
+  .divider { display: block; width: 100%; height: auto; }
+
+  /* ---------- Cintillo de frutas ---------- */
+  .ticker { background: #C42B34; color: #FCE9AB; overflow: hidden; padding: 15px 0; }
+  .ticker-track { display: flex; width: max-content; animation: slide 26s linear infinite; }
+  .ticker-run {
+    display: flex; gap: 34px; padding-right: 34px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase; white-space: nowrap;
+  }
+
+  /* ---------- Secciones ---------- */
+  section[id] { scroll-margin-top: 76px; }
+  .h-section {
+    font-family: 'Bodoni Moda', serif; font-weight: 900;
+    line-height: 0.94; margin: 0 0 10px; text-transform: uppercase;
+  }
+
+  /* ---------- Arma tu tarta ---------- */
+  .builder { background: #FCE9AB; padding: 58px 22px; }
+  .builder .h-section { font-size: clamp(34px, 8cqw, 78px); color: #C42B34; }
+  .builder .intro {
+    margin: 0 0 34px; font-size: 16px; line-height: 1.5; color: #9E9820;
+    max-width: 48ch; text-wrap: pretty;
+  }
+  .builder-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 34px; align-items: start;
+  }
+  .step-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+    color: #C42B34; margin: 0 0 12px;
+  }
+  .step-label span { color: #9E9820; }
+  .step-help { font-size: 13px; line-height: 1.45; color: #9E9820; margin: 0 0 12px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .pill {
+    display: inline-flex; align-items: center; white-space: nowrap; min-height: 44px;
+    padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    border: 1.5px solid var(--pill); color: var(--pill); background: transparent;
+    background-image: linear-gradient(var(--pill), var(--pill));
+    background-repeat: no-repeat; background-position: left center; background-size: 0% 100%;
+    transition: background-size 300ms cubic-bezier(.2,.85,.2,1), color 200ms ease, opacity 200ms ease, transform 120ms ease;
+  }
+  .pill:hover, .pill:focus-visible { background-size: 100% 100%; color: #FCE9AB; }
+  .pill:active { transform: translateY(2px); }
+  .pill.is-on { background-size: 100% 100%; color: #FCE9AB; }
+  .pill--size { --pill: #C42B34; }
+  .pill--fruit { --pill: #9E9820; }
+  .pill.is-full { opacity: 0.45; cursor: default; }
+  .pill.is-full:hover { background-size: 0% 100%; color: var(--pill); }
+  .pill.is-full.is-on:hover { background-size: 100% 100%; color: #FCE9AB; }
+
+  .preview-card {
+    background: #DC4F7C; padding: 22px; display: flex; flex-direction: column; gap: 18px;
+  }
+  .preview-card .step-label { color: #FCE9AB; margin: 0; }
+  .preview-card h3 {
+    font-family: 'Bodoni Moda', serif; font-weight: 700;
+    font-size: clamp(24px, 3.4cqw, 34px); line-height: 1.05; margin: 0; color: #FCE9AB;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; min-height: 26px; }
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding-top: 12px; border-top: 1.5px solid rgba(252,233,171,0.45);
+  }
+  .price { font-family: 'Bodoni Moda', serif; font-weight: 700; font-size: 34px; color: #FCE9AB; }
+  .hint { margin: 0; font-size: 13px; line-height: 1.5; color: rgba(252,233,171,0.85); }
+
+  /* ---------- Etiquetas de fruta (sistema reutilizable) ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; border: 0;
+    padding: 6px 11px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--chip-bg); color: var(--chip-fg); animation: pop 260ms ease both;
+  }
+  /* Sobre el rojo de la sección, la etiqueta de fresa es del mismo color:
+     un filo delgado la mantiene legible sin cambiar la paleta. */
+  .menu .chip { box-shadow: 0 0 0 1.5px rgba(252,233,171,0.55); }
+  button.chip { cursor: pointer; padding: 6px 10px; transition: opacity 180ms ease, transform 120ms ease; }
+  button.chip:hover { opacity: 0.8; }
+  button.chip:active { transform: translateY(2px); }
+
+  /* ---------- Menú: las seis ---------- */
+  .menu { background: #C42B34; padding: 58px 22px; }
+  .menu .eyebrow { color: #FCE9AB; margin: 0 0 14px; }
+  .menu .h-section { font-size: clamp(36px, 9cqw, 84px); color: #FCE9AB; margin-bottom: 34px; }
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 36px 24px; }
+  .tarta { display: flex; flex-direction: column; gap: 13px; }
+  .tarta .frame { overflow: hidden; }
+  .tarta img {
+    width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover;
+    filter: saturate(1.2) contrast(1.07) brightness(1.03);
+    transition: transform 620ms cubic-bezier(.2,.85,.2,1), filter 400ms ease;
+  }
+  .tarta:hover img { transform: scale(1.07); filter: saturate(1.35) contrast(1.1) brightness(1.06); }
+  .tarta h3 {
+    font-family: 'Bodoni Moda', serif; font-weight: 700; font-size: 26px;
+    line-height: 1.05; margin: 0; color: #FCE9AB;
+  }
+  .tarta .price-row { margin-top: auto; padding-top: 8px; border-top-color: rgba(252,233,171,0.4); }
+  .tarta .price { font-size: 28px; }
+
+  /* ---------- Cómo pedir ---------- */
+  .how { background: #FC8A2D; padding: 58px 22px; }
+  .how .h-section { font-size: clamp(32px, 8cqw, 72px); color: #FCE9AB; margin-bottom: 32px; }
+  .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 28px; }
+  .how-num { font-family: 'Bodoni Moda', serif; font-size: 52px; line-height: 1; margin: 0 0 8px; color: #C42B34; }
+  .how h3 { font-family: 'Bodoni Moda', serif; font-weight: 700; font-size: 21px; margin: 0 0 6px; color: #FCE9AB; }
+  .how p { margin: 0; font-size: 15px; line-height: 1.5; color: rgba(252,233,171,0.88); }
+
+  /* ---------- Galería ---------- */
+  .gallery { padding: 58px 0 0; }
+  .gallery h2 {
+    font-family: 'Bodoni Moda', serif; font-weight: 400; font-style: italic;
+    font-size: clamp(32px, 8cqw, 78px); line-height: 1; margin: 0 22px 26px; color: #DC4F7C;
+  }
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 3px; }
+  .gallery .frame { overflow: hidden; }
+  .gallery img {
+    width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover;
+    filter: saturate(1.18) contrast(1.06) brightness(1.03);
+    transition: transform 700ms cubic-bezier(.2,.85,.2,1);
+  }
+  .gallery .frame:hover img { transform: scale(1.08); }
+
+  /* ---------- Preguntas ---------- */
+  .faq { padding: 58px 22px; max-width: 820px; margin: 0 auto; }
+  .faq h2 {
+    font-family: 'Bodoni Moda', serif; font-weight: 700;
+    font-size: clamp(28px, 6cqw, 54px); line-height: 1; margin: 0 0 26px; color: #C42B34;
+  }
+  .faq-item { border-top: 1.5px solid rgba(196,43,52,0.28); }
+  .faq-q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    text-align: left; background: transparent; border: 0; padding: 20px 0; min-height: 60px;
+    font-size: 17px; font-weight: 500; color: #C42B34;
+    transition: color 180ms ease, padding-left 240ms ease;
+  }
+  .faq-q:hover { color: #FC8A2D; padding-left: 8px; }
+  .faq-icon {
+    flex: none; font-family: 'Bodoni Moda', serif; font-size: 26px; color: #FC8A2D;
+    transition: transform 220ms ease;
+  }
+  .faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); }
+  .faq-a { display: none; }
+  .faq-a.is-open { display: block; }
+  .faq-a p { margin: 0; padding: 0 0 22px; font-size: 16px; line-height: 1.55; color: #9E9820; max-width: 58ch; text-wrap: pretty; }
+
+  /* ---------- Pie ---------- */
+  .footer { background: #9E9820; color: #FCE9AB; padding: 52px 22px 108px; }
+  .footer .brand {
+    font-family: 'Bodoni Moda', serif; font-weight: 900;
+    font-size: clamp(30px, 8cqw, 70px); line-height: 0.95; margin: 0 0 28px; text-transform: uppercase;
+  }
+  .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 26px; }
+  .footer h3 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+    color: rgba(252,233,171,0.65); margin: 0 0 10px;
+  }
+  .footer .links { display: flex; flex-direction: column; gap: 7px; font-size: 16px; }
+  .footer a { color: #FCE9AB; transition: color 180ms ease; }
+  .footer a:hover { color: #FC8A2D; }
+  .footer p { margin: 0; font-size: 16px; line-height: 1.6; color: rgba(252,233,171,0.9); }
+
+  /* ---------- Botón flotante de WhatsApp ---------- */
+  .float-wrap { position: sticky; bottom: 0; z-index: 60; height: 0; }
+  .float-wa {
+    position: absolute; right: 18px; bottom: 20px; min-height: 56px; padding: 17px 22px;
+    white-space: nowrap; animation: bob 3.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .ticker-track, .stamp, .float-wa { animation: none; }
+    * { transition-duration: 1ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <a href="#top" class="wordmark">Madresota</a>
+    <a href="#arma" class="btn btn--sm">Arma tu tarta</a>
+  </header>
+
+  <section id="top" class="hero">
+    <p class="eyebrow">Ciudad de México — Fruta natural</p>
+    <div class="hero-grid">
+      <div>
+        <h1>Tartas</h1>
+        <h2>la madresota</h2>
+        <p class="lede">Tú la armas, nosotras la horneamos. Elige tu fruta, mira el precio y mándanos el pedido por WhatsApp en un toque. <span style="color:#FC8A2D;">Desde $50.</span></p>
+        <div class="cta-row">
+          <a href="#arma" class="btn">Empezar</a>
+          <a href="#menu" class="btn-ghost">Ver las seis</a>
+        </div>
+      </div>
+      <div style="position: relative;">
+        <img class="round-photo" src="img/hero.jpg" width="1000" height="1000" alt="Tarta grande de fresa, uva verde y zarzamora junto a fruta recién rebanada">
+        <span class="stamp" aria-hidden="true">Hecha<br>al<br>momento</span>
+      </div>
+    </div>
+  </section>
+
+  <svg class="divider" viewBox="0 0 1200 230" preserveAspectRatio="none" role="presentation" aria-hidden="true" style="margin-top: 26px;">
+    <defs>
+      <g id="sprig">
+        <path d="M0 0L0 -150" stroke="#9E9820" stroke-width="5" fill="none"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -150) scale(0.3)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -118) rotate(52) scale(0.26)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -118) rotate(-52) scale(0.26)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -84) rotate(58) scale(0.28)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -84) rotate(-58) scale(0.28)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -48) rotate(64) scale(0.3)" fill="#9E9820"></path>
+        <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(0 -48) rotate(-64) scale(0.3)" fill="#9E9820"></path>
+      </g>
+      <g id="flor">
+        <path d="M0 0L0 -100" stroke="#9E9820" stroke-width="5" fill="none"></path>
+        <circle cx="0" cy="-118" r="20" fill="#DC4F7C"></circle>
+        <circle cx="-20" cy="-138" r="20" fill="#DC4F7C"></circle>
+        <circle cx="20" cy="-138" r="20" fill="#DC4F7C"></circle>
+        <circle cx="-20" cy="-98" r="20" fill="#DC4F7C"></circle>
+        <circle cx="20" cy="-98" r="20" fill="#DC4F7C"></circle>
+        <circle cx="0" cy="-118" r="13" fill="#FCE9AB"></circle>
+      </g>
+    </defs>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(60 230) rotate(-13) scale(1.1)" fill="#DC4F7C"></path>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(190 230) rotate(11) scale(0.82)" fill="#FC8A2D"></path>
+    <use href="#sprig" transform="translate(128 230) scale(1.12)"></use>
+    <use href="#flor" transform="translate(255 230) scale(0.85)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(330 230) rotate(-7) scale(1.18)" fill="#C42B34"></path>
+    <use href="#sprig" transform="translate(412 230) rotate(6) scale(0.95)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(480 230) rotate(15) scale(0.8)" fill="#DC4F7C"></path>
+    <use href="#flor" transform="translate(545 230) rotate(-6) scale(0.72)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(610 230) rotate(-6) scale(0.98)" fill="#FC8A2D"></path>
+    <use href="#sprig" transform="translate(690 230) rotate(-7) scale(1.24)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(760 230) rotate(12) scale(0.88)" fill="#C42B34"></path>
+    <use href="#flor" transform="translate(830 230) rotate(7) scale(0.8)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(890 230) rotate(-15) scale(1.1)" fill="#DC4F7C"></path>
+    <use href="#sprig" transform="translate(955 230) scale(1.05)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(1030 230) rotate(9) scale(0.92)" fill="#FC8A2D"></path>
+    <use href="#flor" transform="translate(1095 230) rotate(-8) scale(0.75)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(1150 230) rotate(-11) scale(1.02)" fill="#DC4F7C"></path>
+    <use href="#sprig" transform="translate(1190 230) rotate(8) scale(1.1)"></use>
+  </svg>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Arándano</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
+      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Arándano</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
+    </div>
+  </div>
+
+  <section id="arma" class="builder">
+    <h2 class="h-section">Arma tu tarta</h2>
+    <p class="intro">Base de masa de galleta horneada + crema pastelera + brillo de fruta. Tú eliges el tamaño y cuatro porciones de fruta: puedes mezclar o repetir la misma para que sea toda de mango, toda de fresa, lo que se te antoje.</p>
+
+    <div class="builder-grid">
+      <div style="display: flex; flex-direction: column; gap: 30px;">
+        <div>
+          <p class="step-label">1 · Tamaño</p>
+          <div class="pill-row" id="sizeRow"></div>
+        </div>
+        <div>
+          <p class="step-label">2 · Fruta <span>— <span id="pickedCount">0</span> de 4 porciones</span></p>
+          <p class="step-help">Toca una fruta para agregar porción. Puedes repetirla hasta llenar las cuatro.</p>
+          <div class="pill-row" id="fruitRow"></div>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <p class="step-label">3 · Tu tarta</p>
+        <img class="round-photo" id="previewImg" src="img/caja.jpg" width="1000" height="1000" alt="Vista previa de tu tarta">
+        <h3 id="buildName"></h3>
+        <div class="chip-row" id="pickedChips"></div>
+        <div class="price-row">
+          <span class="price" id="buildPrice"></span>
+          <a class="btn btn--sm" id="buildWa" href="#" target="_blank" rel="noopener">Pedir esta</a>
+        </div>
+        <p class="hint" id="buildHint"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" class="menu">
+    <p class="eyebrow">O escoge una de siempre</p>
+    <h2 class="h-section">Las seis favoritas</h2>
+    <div class="menu-grid" id="menuGrid"></div>
+  </section>
+
+  <section id="como-pedir" class="how">
+    <h2 class="h-section">Cómo pedir</h2>
+    <div class="how-grid">
+      <div>
+        <p class="how-num">01</p>
+        <h3>Arma o elige tu tarta</h3>
+        <p>Individual, barra o grande para compartir.</p>
+      </div>
+      <div>
+        <p class="how-num">02</p>
+        <h3>Manda el WhatsApp</h3>
+        <p>El mensaje va listo con tu tamaño y tus frutas. Un día antes, por favor.</p>
+      </div>
+      <div>
+        <p class="how-num">03</p>
+        <h3>Recoge o te la llevamos</h3>
+        <p>Entregas lunes y jueves en Coyoacán y alrededores.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="galeria" class="gallery">
+    <h2>puro antojo</h2>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </section>
+
+  <section id="faq" class="faq">
+    <h2>Preguntas</h2>
+    <div id="faqList"></div>
+  </section>
+
+  <svg class="divider" viewBox="0 0 1200 210" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(70 210) rotate(-14) scale(1.05)" fill="#DC4F7C"></path>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(210 210) rotate(10) scale(0.8)" fill="#FC8A2D"></path>
+    <use href="#sprig" transform="translate(140 210) scale(1.15)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(320 210) rotate(-8) scale(1.15)" fill="#C42B34"></path>
+    <use href="#sprig" transform="translate(400 210) rotate(6) scale(0.95)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(470 210) rotate(16) scale(0.78)" fill="#DC4F7C"></path>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(580 210) rotate(-6) scale(0.95)" fill="#FC8A2D"></path>
+    <use href="#sprig" transform="translate(660 210) rotate(-7) scale(1.25)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(740 210) rotate(12) scale(0.86)" fill="#C42B34"></path>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(850 210) rotate(-16) scale(1.08)" fill="#DC4F7C"></path>
+    <use href="#sprig" transform="translate(920 210) scale(1.05)"></use>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(1000 210) rotate(9) scale(0.9)" fill="#FC8A2D"></path>
+    <path d="M0 0C-52 -30 -52 -92 0 -132C52 -92 52 -30 0 0Z" transform="translate(1105 210) rotate(-11) scale(1.0)" fill="#DC4F7C"></path>
+    <use href="#sprig" transform="translate(1170 210) rotate(8) scale(1.1)"></use>
+  </svg>
+
+  <footer class="footer">
+    <p class="brand">Tartas La Madresota</p>
+    <div class="footer-grid">
+      <div>
+        <h3>Contacto</h3>
+        <div class="links">
+          <a id="waFooter" href="#" target="_blank" rel="noopener">WhatsApp 55 7340 8147</a>
+          <a href="https://www.instagram.com/tartas_la_madresota" target="_blank" rel="noopener">Instagram @tartas_la_madresota</a>
+        </div>
+      </div>
+      <div>
+        <h3>Pedidos</h3>
+        <p>Entregas lunes y jueves.<br>Aparta con un día de anticipación: domingo para el lunes, miércoles para el jueves.</p>
+      </div>
+      <div>
+        <h3>Zona</h3>
+        <p>Ciudad de México — Coyoacán y alrededores.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="float-wrap">
+    <a class="btn float-wa" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Pedir por WhatsApp">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-1.4.1-3.5-1-5-2.6-1.4-1.5-2.5-3.5-2.4-4.8 0-.5.6-1.5 1.2-1.7.3-.1.7 0 .9.4l.8 1.5c.1.3.1.5-.1.8l-.4.5c-.1.2-.2.4 0 .7.3.5.8 1.1 1.3 1.5.4.4 1 .8 1.5 1 .3.2.5.1.7-.1l.5-.5c.2-.2.5-.3.8-.1l1.5.8c.4.2.5.6.4.9Z"></path></svg>
+      Pedir
+    </a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ====== Datos fáciles de actualizar ====== */
+
+  var WHATSAPP = "5215573408147";                                   // número del negocio
+  var INSTAGRAM = "https://www.instagram.com/tartas_la_madresota";   // perfil del negocio
+
+  var IMG = {
+    clasica:     "img/clasica.jpg",
+    frutosRojos: "img/frutos-rojos.jpg",
+    grapeRound:  "img/uva-fresa.jpg",
+    mangoRound:  "img/mango-durazno.jpg",
+    bigTart:     "img/tarta-grande.jpg",
+    bigTop:      "img/grande-arriba.jpg",
+    barsKiwi:    "img/barras-kiwi.jpg",
+    barsBlue:    "img/barras-arandano.jpg",
+    boxRound:    "img/caja.jpg",
+    trayOfSix:   "img/tabla-seis.jpg",
+    hero:        "img/hero.jpg"
+  };
+
+  var FRUIT = {
+    fresa:     { label: "Fresa",     bg: "#C42B34", fg: "#FCE9AB" },
+    kiwi:      { label: "Kiwi",      bg: "#9E9820", fg: "#FCE9AB" },
+    arandano:  { label: "Arándano",  bg: "#6E3B6B", fg: "#FCE9AB" },
+    mango:     { label: "Mango",     bg: "#FCE9AB", fg: "#C42B34" },
+    durazno:   { label: "Durazno",   bg: "#FC8A2D", fg: "#FCE9AB" },
+    uva:       { label: "Uva verde", bg: "#C3BD52", fg: "#5E5A0F" },
+    zarzamora: { label: "Zarzamora", bg: "#8E2B54", fg: "#FCE9AB" },
+    frambuesa: { label: "Frambuesa", bg: "#F2799F", fg: "#8E2B54" }
+  };
+  var FRUIT_ORDER = ["fresa", "kiwi", "mango", "durazno", "arandano", "zarzamora", "uva", "frambuesa"];
+
+  var SIZES = [
+    { id: "individual", label: "Individual", price: "$50",     note: "Redonda, porción personal.",              img: IMG.boxRound },
+    { id: "barra",      label: "Barra",      price: "$50",     note: "Rectangular, misma porción, alargada.",   img: IMG.barsKiwi },
+    { id: "grande",     label: "Grande",     price: "Cotizar", note: "Para compartir, 6 a 8 porciones.",        img: IMG.bigTop }
+  ];
+
+  var TARTAS = [
+    { name: "La Clásica",   fruits: ["fresa", "kiwi"],                                  price: "$50",     img: IMG.clasica,     pos: "50% 50%" },
+    { name: "La Azulita",   fruits: ["fresa", "arandano"],                              price: "$50",     img: IMG.barsBlue,    pos: "38% 45%" },
+    { name: "Frutos Rojos", fruits: ["zarzamora", "frambuesa", "kiwi"],                 price: "$50",     img: IMG.frutosRojos, pos: "50% 50%" },
+    { name: "La Tropical",  fruits: ["mango", "durazno", "fresa", "arandano"],          price: "$50",     img: IMG.mangoRound, pos: "50% 42%" },
+    { name: "Verde y Roja", fruits: ["fresa", "uva"],                                   price: "$50",     img: IMG.grapeRound, pos: "45% 40%" },
+    { name: "La Madresota", fruits: ["durazno", "kiwi", "fresa", "zarzamora", "uva"],   price: "Cotizar", img: IMG.bigTart,    pos: "50% 45%" }
+  ];
+
+  var GALLERY = [
+    { img: IMG.trayOfSix,  alt: "Charola con seis tartas individuales recién armadas" },
+    { img: IMG.bigTop,     alt: "Tarta grande de fruta natural" },
+    { img: IMG.grapeRound, alt: "Tarta individual de fresa y uva verde" },
+    { img: IMG.hero,       alt: "Tarta grande de fresa, uva verde y zarzamora" },
+    { img: IMG.mangoRound, alt: "Tarta individual de mango y durazno" },
+    { img: IMG.barsKiwi,   alt: "Barras de kiwi y fresa" },
+    { img: IMG.barsBlue,   alt: "Barras de arándano y fresa" },
+    { img: IMG.boxRound,   alt: "Tarta individual en caja para llevar" }
+  ];
+
+  var FAQS = [
+    { q: "¿Con cuánta anticipación debo pedir?", a: "Un día antes: domingo para las entregas del lunes, miércoles para las del jueves. Para la tarta grande, dos días es lo ideal." },
+    { q: "¿A qué zonas entregan?", a: "Entregamos en la Ciudad de México: Coyoacán y colonias cercanas. Si estás más lejos, escríbenos y lo vemos." },
+    { q: "¿Puedo pedir cualquier combinación de fruta?", a: "Sí, hasta cuatro frutas por tarta. Armamos tu combinación con lo que haya fresco ese día." },
+    { q: "¿Cuánto duran y cómo las guardo?", a: "Se disfrutan mejor el mismo día. En refrigeración se mantienen bien hasta 48 horas, tapadas y sin congelar." },
+    { q: "¿Para cuántas personas es la tarta grande?", a: "De 6 a 8 porciones, según cómo la partas. Perfecta para cumpleaños o reunión familiar." },
+    { q: "¿Cómo puedo pagar?", a: "Efectivo al entregar o transferencia. Para pedidos grandes te pedimos un anticipo." }
+  ];
+
+  // Nombres para combinaciones conocidas. La llave va con las frutas en orden alfabético.
+  var NAMES = {
+    "fresa+kiwi": "La Clásica",
+    "arandano+fresa": "La Azulita",
+    "fresa+uva": "Verde y Roja",
+    "frambuesa+zarzamora": "Frutos Rojos",
+    "durazno+mango": "La Tropical"
+  };
+
+  /* ====== Utilidades ====== */
+
+  function wa(msg) {
+    return "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+  }
+
+  // "Cotizar" es el valor en los datos; "A cotizar" es como se muestra.
+  // Pasa por aquí tanto el armador como las tarjetas del menú.
+  function priceLabel(price) {
+    return price === "Cotizar" ? "A cotizar" : price;
+  }
+
+  function el(tag, className, text) {
+    var n = document.createElement(tag);
+    if (className) n.className = className;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function chip(fruitId, label, onClick) {
+    var f = FRUIT[fruitId];
+    var n = el(onClick ? "button" : "span", "chip", label);
+    n.style.setProperty("--chip-bg", f.bg);
+    n.style.setProperty("--chip-fg", f.fg);
+    if (onClick) {
+      n.type = "button";
+      n.title = "Quitar una porción";
+      n.addEventListener("click", onClick);
+    }
+    return n;
+  }
+
+  /* ====== Estado del armador ====== */
+
+  var state = { size: "individual", picked: ["fresa", "kiwi"] };
+
+  function currentSize() {
+    for (var i = 0; i < SIZES.length; i++) {
+      if (SIZES[i].id === state.size) return SIZES[i];
+    }
+    return SIZES[0];
+  }
+
+  function counts() {
+    var c = {};
+    state.picked.forEach(function (f) { c[f] = (c[f] || 0) + 1; });
+    return c;
+  }
+
+  function addFruit(id) {
+    if (state.picked.length < 4) {
+      state.picked = state.picked.concat([id]);
+      renderBuilder();
+    }
+  }
+
+  function removeFruit(id) {
+    var p = state.picked.slice();
+    var i = p.indexOf(id);
+    if (i !== -1) { p.splice(i, 1); state.picked = p; renderBuilder(); }
+  }
+
+  /* ====== Render: armador ====== */
+
+  var sizeRow    = document.getElementById("sizeRow");
+  var fruitRow   = document.getElementById("fruitRow");
+  var chipsRow   = document.getElementById("pickedChips");
+  var previewImg = document.getElementById("previewImg");
+
+  function renderBuilder() {
+    var size = currentSize();
+    var c = counts();
+    var uniq = Object.keys(c);
+    var full = state.picked.length >= 4;
+
+    // 1 · Tamaño
+    sizeRow.textContent = "";
+    SIZES.forEach(function (s) {
+      var b = el("button", "pill pill--size" + (state.size === s.id ? " is-on" : ""), s.label);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(state.size === s.id));
+      b.addEventListener("click", function () { state.size = s.id; renderBuilder(); });
+      sizeRow.appendChild(b);
+    });
+
+    // 2 · Fruta
+    fruitRow.textContent = "";
+    FRUIT_ORDER.forEach(function (id) {
+      var on = !!c[id];
+      var b = el("button", "pill pill--fruit" + (on ? " is-on" : "") + (full ? " is-full" : ""),
+                 FRUIT[id].label + (on ? "  ×" + c[id] : ""));
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(on));
+      if (full) b.setAttribute("aria-disabled", "true");
+      b.addEventListener("click", function () { addFruit(id); });
+      fruitRow.appendChild(b);
+    });
+
+    document.getElementById("pickedCount").textContent = String(state.picked.length);
+
+    // 3 · Tu tarta
+    previewImg.src = size.img;
+
+    var uniqKey = uniq.slice().sort().join("+");
+    var name;
+    if (state.picked.length === 0) {
+      name = "Tú eliges la fruta";
+    } else if (uniq.length === 1) {
+      name = (state.picked.length === 4 ? "Toda de " : "La de ") + FRUIT[uniq[0]].label.toLowerCase();
+    } else {
+      name = NAMES[uniqKey] || "Tu combinación";
+    }
+    document.getElementById("buildName").textContent = name;
+
+    chipsRow.textContent = "";
+    uniq.forEach(function (f) {
+      chipsRow.appendChild(chip(f, FRUIT[f].label + (c[f] > 1 ? " ×" + c[f] : ""), function () { removeFruit(f); }));
+    });
+
+    document.getElementById("buildPrice").textContent = priceLabel(size.price);
+    document.getElementById("buildHint").textContent = size.note + (full
+      ? " Ya tienes las cuatro porciones: toca una etiqueta para quitarla."
+      : " Toca una fruta dos veces para que lleve doble porción.");
+
+    var detail = uniq.map(function (f) {
+      return FRUIT[f].label.toLowerCase() + (c[f] > 1 ? " x" + c[f] : "");
+    }).join(", ");
+    var msg = state.picked.length
+      ? "Hola, quiero pedir una tarta " + size.label.toLowerCase() + " con " + detail + " 🍓"
+      : "Hola, quiero pedir una tarta " + size.label.toLowerCase() + " 🍓";
+    document.getElementById("buildWa").href = wa(msg);
+  }
+
+  /* ====== Render: menú, galería, preguntas ====== */
+
+  function renderMenu() {
+    var grid = document.getElementById("menuGrid");
+    TARTAS.forEach(function (t) {
+      var art = el("article", "tarta");
+
+      var frame = el("div", "frame");
+      var img = el("img");
+      img.src = t.img;
+      img.width = 1000; img.height = 1000; img.loading = "lazy"; img.decoding = "async";
+      img.style.objectPosition = t.pos;
+      img.alt = "Tarta " + t.name + " con " + t.fruits.map(function (f) {
+        return FRUIT[f].label.toLowerCase();
+      }).join(", ");
+      frame.appendChild(img);
+      art.appendChild(frame);
+
+      art.appendChild(el("h3", null, t.name));
+
+      var chips = el("div", "chip-row");
+      t.fruits.forEach(function (f) { chips.appendChild(chip(f, FRUIT[f].label)); });
+      art.appendChild(chips);
+
+      var row = el("div", "price-row");
+      row.appendChild(el("span", "price", priceLabel(t.price)));
+      var a = el("a", "btn-ghost btn-ghost--cream", "Pedirla");
+      a.href = wa("Hola, quiero pedir una tarta " + t.name + " 🍓");
+      a.target = "_blank"; a.rel = "noopener";
+      row.appendChild(a);
+      art.appendChild(row);
+
+      grid.appendChild(art);
+    });
+  }
+
+  function renderGallery() {
+    var grid = document.getElementById("galleryGrid");
+    GALLERY.forEach(function (g) {
+      var frame = el("div", "frame");
+      var img = el("img");
+      img.src = g.img; img.alt = g.alt;
+      img.width = 1000; img.height = 1000; img.loading = "lazy"; img.decoding = "async";
+      frame.appendChild(img);
+      grid.appendChild(frame);
+    });
+  }
+
+  function renderFaqs() {
+    var list = document.getElementById("faqList");
+    FAQS.forEach(function (f, i) {
+      var item = el("div", "faq-item");
+
+      var btn = el("button", "faq-q");
+      btn.type = "button";
+      btn.setAttribute("aria-expanded", i === 0 ? "true" : "false");
+      btn.setAttribute("aria-controls", "faq-a-" + i);
+      btn.appendChild(document.createTextNode(f.q));
+      var icon = el("span", "faq-icon", "+");
+      icon.setAttribute("aria-hidden", "true");
+      btn.appendChild(icon);
+
+      var body = el("div", "faq-a" + (i === 0 ? " is-open" : ""));
+      body.id = "faq-a-" + i;
+      body.appendChild(el("p", null, f.a));
+
+      btn.addEventListener("click", function () {
+        var open = btn.getAttribute("aria-expanded") === "true";
+        list.querySelectorAll(".faq-q").forEach(function (b) { b.setAttribute("aria-expanded", "false"); });
+        list.querySelectorAll(".faq-a").forEach(function (b) { b.classList.remove("is-open"); });
+        if (!open) { btn.setAttribute("aria-expanded", "true"); body.classList.add("is-open"); }
+      });
+
+      item.appendChild(btn);
+      item.appendChild(body);
+      list.appendChild(item);
+    });
+  }
+
+  /* ====== Arranque ====== */
+
+  var general = wa("Hola, quiero pedir una tarta 🍓");
+  document.getElementById("waFloat").href = general;
+  document.getElementById("waFooter").href = general;
+
+  renderBuilder();
+  renderMenu();
+  renderGallery();
+  renderFaqs();
+})();
+</script>
+</body>
+</html>
