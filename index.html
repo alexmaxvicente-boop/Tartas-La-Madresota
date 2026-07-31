@@ -215,6 +215,7 @@
     font-family: 'Bodoni Moda', serif; font-weight: 700; font-size: 26px;
     line-height: 1.05; margin: 0; color: #FCE9AB;
   }
+  .tarta .note { margin: -4px 0 0; font-size: 15px; line-height: 1.4; color: rgba(252,233,171,0.92); }
   .tarta .price-row { margin-top: auto; padding-top: 8px; border-top-color: rgba(252,233,171,0.4); }
   .tarta .price { font-size: 28px; }
 
@@ -402,7 +403,7 @@
 
   <section id="menu" class="menu">
     <p class="eyebrow">O escoge una de siempre</p>
-    <h2 class="h-section">Las seis favoritas</h2>
+    <h2 class="h-section">Nuestras favoritas</h2>
     <div class="menu-grid" id="menuGrid"></div>
   </section>
 
@@ -494,17 +495,28 @@
   var INSTAGRAM = "https://www.instagram.com/tartas_la_madresota";   // perfil del negocio
 
   var IMG = {
+    // tartas del menú
     clasica:     "img/clasica.jpg",
     frutosRojos: "img/frutos-rojos.jpg",
-    grapeRound:  "img/uva-fresa.jpg",
-    mangoRound:  "img/mango-durazno.jpg",
+    azulita:     "img/barras-arandano.jpg",
+    tropical:    "img/mango-durazno.jpg",
+    verdeRoja:   "img/uva-fresa.jpg",
+    moradota:    "img/moradota.jpg",
+    mitad:       "img/mitad.jpg",
+    duraznera:   "img/duraznera.jpg",
+    // tamaños y galería
+    barra:       "img/barras-kiwi.jpg",
     bigTart:     "img/tarta-grande.jpg",
     bigTop:      "img/grande-arriba.jpg",
-    barsKiwi:    "img/barras-kiwi.jpg",
-    barsBlue:    "img/barras-arandano.jpg",
     boxRound:    "img/caja.jpg",
-    trayOfSix:   "img/tabla-seis.jpg",
-    hero:        "img/hero.jpg"
+    tray:        "img/tabla-seis.jpg",
+    hero:        "img/hero.jpg",
+    pedestal:    "img/g-pedestal.jpg",
+    mano:        "img/g-mano.jpg",
+    plato:       "img/g-plato.jpg",
+    copa:        "img/g-copa.jpg",
+    macro:       "img/g-macro.jpg",
+    tabla:       "img/g-tabla.jpg"
   };
 
   var FRUIT = {
@@ -520,29 +532,36 @@
   var FRUIT_ORDER = ["fresa", "kiwi", "mango", "durazno", "arandano", "zarzamora", "uva", "frambuesa"];
 
   var SIZES = [
-    { id: "individual", label: "Individual", price: "$50",     note: "Redonda, porción personal.",              img: IMG.boxRound },
-    { id: "barra",      label: "Barra",      price: "$50",     note: "Rectangular, misma porción, alargada.",   img: IMG.barsKiwi },
+    { id: "individual", label: "Individual", price: "$50",     note: "Redonda, porción personal.",              img: IMG.moradota },
+    { id: "barra",      label: "Barra",      price: "$50",     note: "Rectangular, misma porción, alargada.",   img: IMG.barra },
     { id: "grande",     label: "Grande",     price: "Cotizar", note: "Para compartir, 6 a 8 porciones.",        img: IMG.bigTop }
   ];
 
   var TARTAS = [
-    { name: "La Clásica",   fruits: ["fresa", "kiwi"],                                  price: "$50",     img: IMG.clasica,     pos: "50% 50%" },
-    { name: "La Azulita",   fruits: ["fresa", "arandano"],                              price: "$50",     img: IMG.barsBlue,    pos: "38% 45%" },
-    { name: "Frutos Rojos", fruits: ["zarzamora", "frambuesa", "kiwi"],                 price: "$50",     img: IMG.frutosRojos, pos: "50% 50%" },
-    { name: "La Tropical",  fruits: ["mango", "durazno", "fresa", "arandano"],          price: "$50",     img: IMG.mangoRound, pos: "50% 42%" },
-    { name: "Verde y Roja", fruits: ["fresa", "uva"],                                   price: "$50",     img: IMG.grapeRound, pos: "45% 40%" },
-    { name: "La Madresota", fruits: ["durazno", "kiwi", "fresa", "zarzamora", "uva"],   price: "Cotizar", img: IMG.bigTart,    pos: "50% 45%" }
+    { name: "La Clásica",    fruits: ["fresa", "kiwi"],                                price: "$50",     img: IMG.clasica,     pos: "50% 50%", note: "" },
+    { name: "Frutos Rojos",  fruits: ["zarzamora", "frambuesa", "kiwi"],               price: "$50",     img: IMG.frutosRojos, pos: "50% 50%", note: "" },
+    { name: "La Azulita",    fruits: ["fresa", "arandano"],                            price: "$50",     img: IMG.azulita,     pos: "38% 45%", note: "" },
+    { name: "La Tropical",   fruits: ["mango", "durazno", "fresa"],                    price: "$50",     img: IMG.tropical,    pos: "50% 55%", note: "" },
+    { name: "Verde y Roja",  fruits: ["fresa", "uva"],                                 price: "$50",     img: IMG.verdeRoja,   pos: "45% 40%", note: "" },
+    { name: "La Moradota",   fruits: ["zarzamora", "arandano", "kiwi"],                price: "$50",     img: IMG.moradota,    pos: "50% 50%", note: "Toda de frutos azules, con su toque de kiwi." },
+    { name: "Mitad y Mitad", fruits: ["fresa", "zarzamora", "arandano"],               price: "$50",     img: IMG.mitad,       pos: "50% 45%", note: "Mitad fresa, mitad frutos azules." },
+    { name: "La Duraznera",  fruits: ["durazno", "fresa", "uva"],                      price: "$50",     img: IMG.duraznera,   pos: "50% 55%", note: "" },
+    { name: "La Madresota",  fruits: ["durazno", "kiwi", "fresa", "zarzamora", "uva"], price: "Cotizar", img: IMG.tabla,       pos: "50% 45%", note: "" }
   ];
 
   var GALLERY = [
-    { img: IMG.trayOfSix,  alt: "Charola con seis tartas individuales recién armadas" },
-    { img: IMG.bigTop,     alt: "Tarta grande de fruta natural" },
-    { img: IMG.grapeRound, alt: "Tarta individual de fresa y uva verde" },
-    { img: IMG.hero,       alt: "Tarta grande de fresa, uva verde y zarzamora" },
-    { img: IMG.mangoRound, alt: "Tarta individual de mango y durazno" },
-    { img: IMG.barsKiwi,   alt: "Barras de kiwi y fresa" },
-    { img: IMG.barsBlue,   alt: "Barras de arándano y fresa" },
-    { img: IMG.boxRound,   alt: "Tarta individual en caja para llevar" }
+    { img: IMG.pedestal,  alt: "Tarta individual en pedestal de madera" },
+    { img: IMG.bigTop,    alt: "Tarta grande de fruta natural" },
+    { img: IMG.tabla,     alt: "Dos tartas individuales en tabla de madera" },
+    { img: IMG.tropical,  alt: "Tarta individual de mango y durazno" },
+    { img: IMG.macro,     alt: "Acercamiento de zarzamora, arándano y kiwi" },
+    { img: IMG.tray,      alt: "Charola de tartas individuales" },
+    { img: IMG.copa,      alt: "Tarta individual servida en copa de madera" },
+    { img: IMG.bigTart,   alt: "Tarta grande lista para entregar" },
+    { img: IMG.plato,     alt: "Tarta de durazno y tarta de frutos azules en plato" },
+    { img: IMG.boxRound,  alt: "Tarta individual en caja para llevar" },
+    { img: IMG.mano,      alt: "Tarta recién servida" },
+    { img: IMG.barra,     alt: "Barras individuales de fruta" }
   ];
 
   var FAQS = [
@@ -715,6 +734,7 @@
       art.appendChild(frame);
 
       art.appendChild(el("h3", null, t.name));
+      if (t.note) art.appendChild(el("p", "note", t.note));
 
       var chips = el("div", "chip-row");
       t.fruits.forEach(function (f) { chips.appendChild(chip(f, FRUIT[f].label)); });
