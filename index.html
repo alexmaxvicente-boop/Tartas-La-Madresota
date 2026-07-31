@@ -365,8 +365,8 @@
 
   <div class="ticker" aria-hidden="true">
     <div class="ticker-track">
-      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Arándano</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
-      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Arándano</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
+      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Blueberry</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
+      <span class="ticker-run"><span>Fresa</span><span>◦</span><span>Kiwi</span><span>◦</span><span>Mango</span><span>◦</span><span>Durazno</span><span>◦</span><span>Blueberry</span><span>◦</span><span>Zarzamora</span><span>◦</span><span>Uva verde</span><span>◦</span><span>Frambuesa</span><span>◦</span></span>
     </div>
   </div>
 
@@ -413,7 +413,7 @@
       <div>
         <p class="how-num">01</p>
         <h3>Arma o elige tu tarta</h3>
-        <p>Individual, barra o grande para compartir.</p>
+        <p>Individual, barra, mediana de 25 cm o grande de 30 cm.</p>
       </div>
       <div>
         <p class="how-num">02</p>
@@ -522,7 +522,7 @@
   var FRUIT = {
     fresa:     { label: "Fresa",     bg: "#C42B34", fg: "#FCE9AB" },
     kiwi:      { label: "Kiwi",      bg: "#9E9820", fg: "#FCE9AB" },
-    arandano:  { label: "Arándano",  bg: "#6E3B6B", fg: "#FCE9AB" },
+    arandano:  { label: "Blueberry", bg: "#6E3B6B", fg: "#FCE9AB" },
     mango:     { label: "Mango",     bg: "#FCE9AB", fg: "#C42B34" },
     durazno:   { label: "Durazno",   bg: "#FC8A2D", fg: "#FCE9AB" },
     uva:       { label: "Uva verde", bg: "#C3BD52", fg: "#5E5A0F" },
@@ -531,10 +531,12 @@
   };
   var FRUIT_ORDER = ["fresa", "kiwi", "mango", "durazno", "arandano", "zarzamora", "uva", "frambuesa"];
 
+  // "label" es lo que se ve en el botón; "pedido" es como se escribe en el WhatsApp.
   var SIZES = [
-    { id: "individual", label: "Individual", price: "$50",     note: "Redonda, porción personal.",              img: IMG.moradota },
-    { id: "barra",      label: "Barra",      price: "$50",     note: "Rectangular, misma porción, alargada.",   img: IMG.barra },
-    { id: "grande",     label: "Grande",     price: "Cotizar", note: "Para compartir, 6 a 8 porciones.",        img: IMG.bigTop }
+    { id: "individual", label: "Individual",    pedido: "individual",        price: "$50",     note: "Redonda, porción personal.",             img: IMG.moradota },
+    { id: "barra",      label: "Barra",         pedido: "barra",             price: "$50",     note: "Rectangular, misma porción, alargada.",  img: IMG.barra },
+    { id: "mediana",    label: "Mediana 25 cm", pedido: "mediana de 25 cm",  price: "Cotizar", note: "Redonda de 25 cm, para compartir.",      img: IMG.bigTart },
+    { id: "grande",     label: "Grande 30 cm",  pedido: "grande de 30 cm",   price: "Cotizar", note: "Redonda de 30 cm, de 6 a 8 porciones.",  img: IMG.bigTop }
   ];
 
   var TARTAS = [
@@ -554,7 +556,7 @@
     { img: IMG.bigTop,    alt: "Tarta grande de fruta natural" },
     { img: IMG.tabla,     alt: "Dos tartas individuales en tabla de madera" },
     { img: IMG.tropical,  alt: "Tarta individual de mango y durazno" },
-    { img: IMG.macro,     alt: "Acercamiento de zarzamora, arándano y kiwi" },
+    { img: IMG.macro,     alt: "Acercamiento de zarzamora, blueberry y kiwi" },
     { img: IMG.tray,      alt: "Charola de tartas individuales" },
     { img: IMG.copa,      alt: "Tarta individual servida en copa de madera" },
     { img: IMG.bigTart,   alt: "Tarta grande lista para entregar" },
@@ -568,7 +570,7 @@
     { q: "¿Con cuánta anticipación debo pedir?", a: "Un día antes: domingo para las entregas del lunes, miércoles para las del jueves. Para la tarta grande, dos días es lo ideal." },
     { q: "¿A qué zonas entregan?", a: "Entregamos en la Ciudad de México: Coyoacán y colonias cercanas. Si estás más lejos, escríbenos y lo vemos." },
     { q: "¿Puedo pedir cualquier combinación de fruta?", a: "Sí, hasta cuatro frutas por tarta. Armamos tu combinación con lo que haya fresco ese día." },
-    { q: "¿Cuánto duran y cómo las guardo?", a: "Se disfrutan mejor el mismo día. En refrigeración se mantienen bien hasta 48 horas, tapadas y sin congelar." },
+    { q: "¿Cuánto duran y cómo las guardo?", a: "Se disfrutan mejor el mismo día: duran unas 12 horas. Consérvalas en refrigeración y tapadas hasta el momento de servir, sin congelar." },
     { q: "¿Para cuántas personas es la tarta grande?", a: "De 6 a 8 porciones, según cómo la partas. Perfecta para cumpleaños o reunión familiar." },
     { q: "¿Cómo puedo pagar?", a: "Efectivo al entregar o transferencia. Para pedidos grandes te pedimos un anticipo." }
   ];
@@ -710,8 +712,8 @@
       return FRUIT[f].label.toLowerCase() + (c[f] > 1 ? " x" + c[f] : "");
     }).join(", ");
     var msg = state.picked.length
-      ? "Hola, quiero pedir una tarta " + size.label.toLowerCase() + " con " + detail + " 🍓"
-      : "Hola, quiero pedir una tarta " + size.label.toLowerCase() + " 🍓";
+      ? "Hola, quiero pedir una tarta " + size.pedido + " con " + detail + " 🍓"
+      : "Hola, quiero pedir una tarta " + size.pedido + " 🍓";
     document.getElementById("buildWa").href = wa(msg);
   }
 
