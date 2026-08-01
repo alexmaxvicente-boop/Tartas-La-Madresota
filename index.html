@@ -164,7 +164,9 @@
   .pill:active { transform: translateY(2px); }
   .pill.is-on { background-size: 100% 100%; color: #FCE9AB; }
   .pill--size { --pill: #C42B34; }
-  .pill--fruit { --pill: #9E9820; }
+  /* Naranja quemado: es el naranja de la paleta, un tono más profundo
+     para que la letra crema siga leyéndose dentro del botón. */
+  .pill--fruit { --pill: #D2691E; }
   .pill.is-full { opacity: 0.45; cursor: default; }
   .pill.is-full:hover { background-size: 0% 100%; color: var(--pill); }
   .pill.is-full.is-on:hover { background-size: 100% 100%; color: #FCE9AB; }
@@ -184,6 +186,43 @@
   }
   .price { font-family: 'Bodoni Moda', serif; font-weight: 700; font-size: 34px; color: #FCE9AB; }
   .hint { margin: 0; font-size: 13px; line-height: 1.5; color: rgba(252,233,171,0.85); }
+
+  /* ---------- Pedido: varias tartas antes de mandar el WhatsApp ---------- */
+  .btn--block { justify-content: center; width: 100%; }
+  .order {
+    display: flex; flex-direction: column; gap: 10px;
+    padding-top: 14px; border-top: 1.5px solid rgba(252,233,171,0.45);
+  }
+  .order-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .order-item {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    font-size: 14px; line-height: 1.35; color: #FCE9AB; animation: pop 260ms ease both;
+  }
+  .order-item .txt { flex: 1; }
+  .order-item .txt b { font-weight: 700; }
+  .order-item .txt span { display: block; font-size: 12px; color: rgba(252,233,171,0.8); }
+  .order-del {
+    flex: none; width: 32px; height: 32px; padding: 0; line-height: 1; font-size: 17px;
+    border: 1.5px solid rgba(252,233,171,0.6); background: transparent; color: #FCE9AB;
+    transition: background-color 180ms ease, color 180ms ease, transform 120ms ease;
+  }
+  .order-del:hover { background-color: #FCE9AB; color: #DC4F7C; }
+  .order-del:active { transform: translateY(2px); }
+  /* "Agregar otra": relleno crema sobre el rosa de la tarjeta, para que se vea.
+     Al pasar el cursor se invierte a rojo con letra crema. */
+  .btn-add {
+    display: inline-flex; align-items: center; justify-content: center; border: 0;
+    min-height: 46px; padding: 13px 20px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    background-color: #FCE9AB; color: #C42B34;
+    background-image: linear-gradient(#C42B34, #C42B34);
+    background-repeat: no-repeat; background-position: left center; background-size: 0% 100%;
+    transition: background-size 320ms cubic-bezier(.2,.85,.2,1), color 200ms ease, transform 120ms ease;
+  }
+  .btn-add:hover, .btn-add:focus-visible { background-size: 100% 100%; color: #FCE9AB; }
+  .btn-add:active { transform: translateY(2px); }
+  .btn-add[disabled] { opacity: 0.45; cursor: default; }
+  .btn-add[disabled]:hover { background-size: 0% 100%; color: #C42B34; }
 
   /* ---------- Etiquetas de fruta (sistema reutilizable) ---------- */
   .chip {
@@ -381,8 +420,8 @@
           <div class="pill-row" id="sizeRow"></div>
         </div>
         <div>
-          <p class="step-label">2 · Fruta <span>— <span id="pickedCount">0</span> de 4 porciones</span></p>
-          <p class="step-help">Toca una fruta para agregar porción. Puedes repetirla hasta llenar las cuatro.</p>
+          <p class="step-label">2 · Fruta <span>— <span id="pickedCount">0</span> de <span id="maxCount">2</span> porciones</span></p>
+          <p class="step-help" id="stepHelp">Toca una fruta para agregar porción. Puedes repetirla hasta llenar las dos.</p>
           <div class="pill-row" id="fruitRow"></div>
         </div>
       </div>
@@ -394,9 +433,16 @@
         <div class="chip-row" id="pickedChips"></div>
         <div class="price-row">
           <span class="price" id="buildPrice"></span>
-          <a class="btn btn--sm" id="buildWa" href="#" target="_blank" rel="noopener">Pedir esta</a>
+          <button type="button" class="btn-add" id="addBtn">Agregar otra</button>
         </div>
         <p class="hint" id="buildHint"></p>
+
+        <div class="order" id="orderBox" hidden>
+          <p class="step-label">Tu pedido — <span id="orderCount">0</span></p>
+          <ul class="order-list" id="orderList"></ul>
+        </div>
+
+        <a class="btn btn--block" id="buildWa" href="#" target="_blank" rel="noopener">Pedir esta</a>
       </div>
     </div>
   </section>
@@ -533,17 +579,18 @@
 
   // "label" es lo que se ve en el botón; "pedido" es como se escribe en el WhatsApp.
   var SIZES = [
-    { id: "individual", label: "Individual",    pedido: "individual",        price: "$50",     note: "Redonda, porción personal.",             img: IMG.moradota },
-    { id: "barra",      label: "Barra",         pedido: "barra",             price: "$50",     note: "Rectangular, misma porción, alargada.",  img: IMG.barra },
-    { id: "mediana",    label: "Mediana 25 cm", pedido: "mediana de 25 cm",  price: "Cotizar", note: "Redonda de 25 cm, para compartir.",      img: IMG.bigTart },
-    { id: "grande",     label: "Grande 30 cm",  pedido: "grande de 30 cm",   price: "Cotizar", note: "Redonda de 30 cm, de 6 a 8 porciones.",  img: IMG.bigTop }
+    // "max" = cuántas porciones de fruta admite ese tamaño.
+    { id: "individual", label: "Individual",    pedido: "individual",       max: 2, price: "$50",     note: "Redonda, porción personal.",            img: IMG.moradota },
+    { id: "barra",      label: "Barra",         pedido: "barra",            max: 2, price: "$50",     note: "Rectangular, misma porción, alargada.", img: IMG.barra },
+    { id: "mediana",    label: "Mediana 25 cm", pedido: "mediana de 25 cm", max: 4, price: "Cotizar", note: "Redonda de 25 cm, para compartir.",     img: IMG.bigTart },
+    { id: "grande",     label: "Grande 30 cm",  pedido: "grande de 30 cm",  max: 4, price: "Cotizar", note: "Redonda de 30 cm, de 6 a 8 porciones.", img: IMG.bigTop }
   ];
 
   var TARTAS = [
     { name: "La Clásica",    fruits: ["fresa", "kiwi"],                                price: "$50",     img: IMG.clasica,     pos: "50% 50%", note: "" },
     { name: "Frutos Rojos",  fruits: ["zarzamora", "frambuesa", "kiwi"],               price: "$50",     img: IMG.frutosRojos, pos: "50% 50%", note: "" },
     { name: "La Azulita",    fruits: ["fresa", "arandano"],                            price: "$50",     img: IMG.azulita,     pos: "38% 45%", note: "" },
-    { name: "La Tropical",   fruits: ["mango", "durazno", "fresa"],                    price: "$50",     img: IMG.tropical,    pos: "50% 55%", note: "" },
+    { name: "La Tropical",   fruits: ["mango", "durazno", "fresa"],                    price: "2 × $60", img: IMG.tropical,    pos: "50% 55%", note: "La mini de 8 cm. Solo se vende en par, no por pieza.", pedido: "2 tartas La Tropical, las mini de 8 cm (el par)" },
     { name: "Verde y Roja",  fruits: ["fresa", "uva"],                                 price: "$50",     img: IMG.verdeRoja,   pos: "45% 40%", note: "" },
     { name: "La Moradota",   fruits: ["zarzamora", "arandano", "kiwi"],                price: "$50",     img: IMG.moradota,    pos: "50% 50%", note: "Toda de frutos azules, con su toque de kiwi." },
     { name: "Mitad y Mitad", fruits: ["fresa", "zarzamora", "arandano"],               price: "$50",     img: IMG.mitad,       pos: "50% 45%", note: "Mitad fresa, mitad frutos azules." },
@@ -618,26 +665,91 @@
 
   /* ====== Estado del armador ====== */
 
-  var state = { size: "individual", picked: ["fresa", "kiwi"] };
+  var NUM = { 1: "una", 2: "dos", 3: "tres", 4: "cuatro" };
 
-  function currentSize() {
+  // "order" son las tartas ya agregadas; "picked" es la que se está armando.
+  var state = { size: "individual", picked: ["fresa", "kiwi"], order: [] };
+
+  function sizeById(id) {
     for (var i = 0; i < SIZES.length; i++) {
-      if (SIZES[i].id === state.size) return SIZES[i];
+      if (SIZES[i].id === id) return SIZES[i];
     }
     return SIZES[0];
   }
+  function currentSize() { return sizeById(state.size); }
+  function maxOf() { return currentSize().max; }
 
-  function counts() {
+  function counts(list) {
     var c = {};
-    state.picked.forEach(function (f) { c[f] = (c[f] || 0) + 1; });
+    (list || state.picked).forEach(function (f) { c[f] = (c[f] || 0) + 1; });
     return c;
   }
 
+  function detailOf(list) {
+    var c = counts(list);
+    return Object.keys(c).map(function (f) {
+      return FRUIT[f].label.toLowerCase() + (c[f] > 1 ? " x" + c[f] : "");
+    }).join(", ");
+  }
+
+  function nameOf(list, size) {
+    if (!list.length) return "Tú eliges la fruta";
+    var c = counts(list), uniq = Object.keys(c);
+    if (uniq.length === 1) {
+      return (list.length === size.max ? "Toda de " : "La de ") + FRUIT[uniq[0]].label.toLowerCase();
+    }
+    return NAMES[uniq.slice().sort().join("+")] || "Tu combinación";
+  }
+
+  function setSize(id) {
+    state.size = id;
+    var m = maxOf();
+    // Si el tamaño nuevo admite menos porciones, recorta las que sobran.
+    if (state.picked.length > m) state.picked = state.picked.slice(0, m);
+    renderBuilder();
+  }
+
   function addFruit(id) {
-    if (state.picked.length < 4) {
+    if (state.picked.length < maxOf()) {
       state.picked = state.picked.concat([id]);
       renderBuilder();
     }
+  }
+
+  /* ====== Pedido de varias tartas ====== */
+
+  function addToOrder() {
+    if (!state.picked.length) return;
+    state.order = state.order.concat([{ size: state.size, picked: state.picked.slice() }]);
+    state.picked = [];   // queda lista para armar la siguiente
+    renderBuilder();
+  }
+
+  function removeFromOrder(i) {
+    var o = state.order.slice();
+    o.splice(i, 1);
+    state.order = o;
+    renderBuilder();
+  }
+
+  function lineOf(item) {
+    return "1 tarta " + sizeById(item.size).pedido + " con " + detailOf(item.picked);
+  }
+
+  // Todas las tartas del pedido, más la que se esté armando si ya tiene fruta.
+  function allItems() {
+    var items = state.order.slice();
+    if (state.picked.length) items.push({ size: state.size, picked: state.picked.slice() });
+    return items;
+  }
+
+  function orderMessage() {
+    var items = allItems();
+    if (!items.length) return "Hola, quiero pedir una tarta " + currentSize().pedido + " 🍓";
+    if (items.length === 1) return "Hola, quiero pedir " + lineOf(items[0]) + " 🍓";
+    return "Hola, quiero pedir:\n" + items.map(function (it, i) {
+      return (i + 1) + ") " + lineOf(it);
+    }).join("\n") + "\n🍓";
   }
 
   function removeFruit(id) {
@@ -655,9 +767,10 @@
 
   function renderBuilder() {
     var size = currentSize();
+    var max = size.max;
     var c = counts();
     var uniq = Object.keys(c);
-    var full = state.picked.length >= 4;
+    var full = state.picked.length >= max;
 
     // 1 · Tamaño
     sizeRow.textContent = "";
@@ -665,7 +778,7 @@
       var b = el("button", "pill pill--size" + (state.size === s.id ? " is-on" : ""), s.label);
       b.type = "button";
       b.setAttribute("aria-pressed", String(state.size === s.id));
-      b.addEventListener("click", function () { state.size = s.id; renderBuilder(); });
+      b.addEventListener("click", function () { setSize(s.id); });
       sizeRow.appendChild(b);
     });
 
@@ -683,20 +796,13 @@
     });
 
     document.getElementById("pickedCount").textContent = String(state.picked.length);
+    document.getElementById("maxCount").textContent = String(max);
+    document.getElementById("stepHelp").textContent =
+      "Toca una fruta para agregar porción. Puedes repetirla hasta llenar las " + NUM[max] + ".";
 
     // 3 · Tu tarta
     previewImg.src = size.img;
-
-    var uniqKey = uniq.slice().sort().join("+");
-    var name;
-    if (state.picked.length === 0) {
-      name = "Tú eliges la fruta";
-    } else if (uniq.length === 1) {
-      name = (state.picked.length === 4 ? "Toda de " : "La de ") + FRUIT[uniq[0]].label.toLowerCase();
-    } else {
-      name = NAMES[uniqKey] || "Tu combinación";
-    }
-    document.getElementById("buildName").textContent = name;
+    document.getElementById("buildName").textContent = nameOf(state.picked, size);
 
     chipsRow.textContent = "";
     uniq.forEach(function (f) {
@@ -705,16 +811,44 @@
 
     document.getElementById("buildPrice").textContent = priceLabel(size.price);
     document.getElementById("buildHint").textContent = size.note + (full
-      ? " Ya tienes las cuatro porciones: toca una etiqueta para quitarla."
+      ? " Ya tienes las " + NUM[max] + " porciones: toca una etiqueta para quitarla."
       : " Toca una fruta dos veces para que lleve doble porción.");
 
-    var detail = uniq.map(function (f) {
-      return FRUIT[f].label.toLowerCase() + (c[f] > 1 ? " x" + c[f] : "");
-    }).join(", ");
-    var msg = state.picked.length
-      ? "Hola, quiero pedir una tarta " + size.pedido + " con " + detail + " 🍓"
-      : "Hola, quiero pedir una tarta " + size.pedido + " 🍓";
-    document.getElementById("buildWa").href = wa(msg);
+    // Botón "Agregar otra": solo sirve si la tarta actual ya tiene fruta
+    var addBtn = document.getElementById("addBtn");
+    addBtn.disabled = !state.picked.length;
+
+    // Lista del pedido
+    var box = document.getElementById("orderBox");
+    var list = document.getElementById("orderList");
+    box.hidden = state.order.length === 0;
+    document.getElementById("orderCount").textContent =
+      String(state.order.length) + (state.order.length === 1 ? " tarta" : " tartas");
+    list.textContent = "";
+    state.order.forEach(function (item, i) {
+      var li = el("li", "order-item");
+      var s = sizeById(item.size);
+      // Si la combinación no tiene nombre propio, encabeza con el tamaño
+      // para que dos renglones nunca se llamen igual.
+      var nm = nameOf(item.picked, s);
+      if (nm === "Tu combinación") nm = s.label;
+      var txt = el("div", "txt");
+      txt.appendChild(el("b", null, nm));
+      txt.appendChild(el("span", null, (nm === s.label ? "" : s.label + " · ") + detailOf(item.picked)));
+      li.appendChild(txt);
+      var del = el("button", "order-del", "×");
+      del.type = "button";
+      del.setAttribute("aria-label", "Quitar esta tarta del pedido");
+      del.addEventListener("click", function () { removeFromOrder(i); });
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+
+    // Botón de WhatsApp: manda todo el pedido junto
+    var total = allItems().length;
+    var waBtn = document.getElementById("buildWa");
+    waBtn.textContent = total > 1 ? "Pedir las " + total : "Pedir esta";
+    waBtn.href = wa(orderMessage());
   }
 
   /* ====== Render: menú, galería, preguntas ====== */
@@ -745,7 +879,7 @@
       var row = el("div", "price-row");
       row.appendChild(el("span", "price", priceLabel(t.price)));
       var a = el("a", "btn-ghost btn-ghost--cream", "Pedirla");
-      a.href = wa("Hola, quiero pedir una tarta " + t.name + " 🍓");
+      a.href = wa("Hola, quiero pedir " + (t.pedido || ("una tarta " + t.name)) + " 🍓");
       a.target = "_blank"; a.rel = "noopener";
       row.appendChild(a);
       art.appendChild(row);
@@ -802,6 +936,7 @@
   var general = wa("Hola, quiero pedir una tarta 🍓");
   document.getElementById("waFloat").href = general;
   document.getElementById("waFooter").href = general;
+  document.getElementById("addBtn").addEventListener("click", addToOrder);
 
   renderBuilder();
   renderMenu();
