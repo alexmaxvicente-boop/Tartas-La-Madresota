@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tartas La Madresota — Generador de código QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700;6..96,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#FCE9AB;color:#C42B34;font-family:"DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:40px 22px 80px}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-family:'Bodoni Moda',serif;font-weight:900;font-size:clamp(30px,7vw,58px);line-height:.95;margin:0 0 8px;text-transform:uppercase}
+  .sub{margin:0 0 32px;color:#9E9820;font-size:16px;line-height:1.5;max-width:56ch}
+  label{display:block;font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#C42B34;margin:0 0 8px}
+  input,select{width:100%;font-family:inherit;font-size:16px;padding:14px 16px;border:1.5px solid #C42B34;background:#FCE9AB;color:#C42B34;min-height:52px}
+  input:focus,select:focus{outline:3px solid #FC8A2D;outline-offset:2px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:26px}
+  .row.full{grid-template-columns:1fr}
+  .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:start;margin-top:8px}
+  .card{background:#fff;padding:26px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .card svg{width:100%;height:auto;max-width:340px;display:block}
+  .caption{font-family:'Bodoni Moda',serif;font-weight:700;font-size:20px;color:#C42B34;text-align:center;line-height:1.2}
+  .caption small{display:block;font-family:"DM Sans",sans-serif;font-weight:500;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9E9820;margin-top:6px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  button{font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;min-height:50px;padding:15px 22px;border:0;color:#FCE9AB;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background-color:#C42B34;background-image:linear-gradient(#FC8A2D,#FC8A2D);background-repeat:no-repeat;background-position:left center;background-size:0% 100%;transition:background-size 340ms cubic-bezier(.2,.85,.2,1),letter-spacing 340ms ease,transform 120ms ease}
+  button:hover,button:focus-visible{background-size:100% 100%;letter-spacing:.26em}
+  button:active{transform:translateY(2px)}
+  .meta{font-size:13px;color:#9E9820;line-height:1.6;margin-top:20px}
+  .meta b{color:#C42B34}
+  .err{color:#fff;background:#C42B34;padding:12px 16px;font-size:14px;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Código QR</h1>
+  <p class="sub">Se genera aquí mismo, en tu navegador. La dirección no se manda a ningún servicio externo. Cámbiala y el código se actualiza solo.</p>
+
+  <div class="row full">
+    <div>
+      <label for="url">Dirección</label>
+      <input id="url" type="text" value="https://tartas-la-madresota.vercel.app/#arma" spellcheck="false">
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label for="ecc">Corrección de errores</label>
+      <select id="ecc">
+        <option value="L">L — 7% (código más chico)</option>
+        <option value="M">M — 15%</option>
+        <option value="Q" selected>Q — 25% (recomendado para imprimir)</option>
+        <option value="H">H — 30% (aguanta más daño)</option>
+      </select>
+    </div>
+    <div>
+      <label for="cap">Texto debajo del código</label>
+      <input id="cap" type="text" value="Tartas La Madresota">
+    </div>
+  </div>
+
+  <div class="err" id="err"></div>
+
+  <div class="out">
+    <div>
+      <div class="card" id="card">
+        <div id="qrbox"></div>
+        <div class="caption" id="capOut">Tartas La Madresota<small>Escanea y arma tu tarta</small></div>
+      </div>
+      <div class="btns">
+        <button id="dlPng">Descargar PNG</button>
+        <button id="dlSvg">Descargar SVG</button>
+      </div>
+    </div>
+    <div>
+      <p class="meta" id="meta"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Codificador QR (modo byte, versiones 1-10, niveles L/M/Q/H).
+   Implementado a mano: no hay librerías ni llamadas de red.
+   ============================================================ */
+const QR = (function () {
+  "use strict";
+
+  // ---- Aritmética en GF(256), polinomio primitivo 0x11D ----
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  (function () {
+    let x = 1;
+    for (let i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11D; }
+    for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  })();
+  const mul = (a, b) => (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]];
+
+  // Polinomio generador de Reed-Solomon de grado n
+  function rsGen(n) {
+    let g = [1];
+    for (let i = 0; i < n; i++) {
+      const ng = new Array(g.length + 1).fill(0);
+      for (let j = 0; j < g.length; j++) {
+        ng[j] ^= g[j];                    // g(x) * x
+        ng[j + 1] ^= mul(g[j], EXP[i]);   // g(x) * a^i
+      }
+      g = ng;
+    }
+    return g;
+  }
+
+  // Residuo de Reed-Solomon = palabras de corrección
+  function rsEnc(data, n) {
+    const g = rsGen(n), res = new Array(n).fill(0);
+    for (let k = 0; k < data.length; k++) {
+      const factor = data[k] ^ res[0];
+      res.shift(); res.push(0);
+      for (let j = 0; j < n; j++) res[j] ^= mul(g[j + 1], factor);
+    }
+    return res;
+  }
+
+  // ---- Tablas del estándar (versiones 1-10) ----
+  const TOTAL = [0, 26, 44, 70, 100, 134, 172, 196, 242, 292, 346];
+  // nivel -> versión -> [palabrasECCporBloque, [[nBloques, palabrasDatos], ...]]
+  const ECB = {
+    L: [0, [7,[[1,19]]], [10,[[1,34]]], [15,[[1,55]]], [20,[[1,80]]], [26,[[1,108]]],
+           [18,[[2,68]]], [20,[[2,78]]], [24,[[2,97]]], [30,[[2,116]]], [18,[[2,68],[2,69]]]],
+    M: [0, [10,[[1,16]]], [16,[[1,28]]], [26,[[1,44]]], [18,[[2,32]]], [24,[[2,43]]],
+           [16,[[4,27]]], [18,[[4,31]]], [22,[[2,38],[2,39]]], [22,[[3,36],[2,37]]], [26,[[4,43],[1,44]]]],
+    Q: [0, [13,[[1,13]]], [22,[[1,22]]], [18,[[2,17]]], [26,[[2,24]]], [18,[[2,15],[2,16]]],
+           [24,[[4,19]]], [18,[[2,14],[4,15]]], [22,[[4,18],[2,19]]], [20,[[4,16],[4,17]]], [24,[[6,19],[2,20]]]],
+    H: [0, [17,[[1,9]]], [28,[[1,16]]], [22,[[2,13]]], [16,[[4,9]]], [22,[[2,11],[2,12]]],
+           [28,[[4,15]]], [26,[[4,13],[1,14]]], [26,[[4,14],[2,15]]], [24,[[4,12],[4,13]]], [28,[[6,15],[2,16]]]]
+  };
+  const ALIGN = [null, [], [6,18], [6,22], [6,26], [6,30], [6,34], [6,22,38], [6,24,42], [6,26,46], [6,28,50]];
+  const REMAIN = [0, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0];
+  const VERINFO = { 7: 0x07C94, 8: 0x085BC, 9: 0x09A99, 10: 0x0A4D3 };
+  const ECCBITS = { L: 1, M: 0, Q: 3, H: 2 };
+
+  const dataWords = (ver, ecc) => ECB[ecc][ver][1].reduce((s, g) => s + g[0] * g[1], 0);
+
+  // ---- Información de formato: BCH(15,5) con máscara 0x5412 ----
+  function formatBits(ecc, mask) {
+    const d = (ECCBITS[ecc] << 3) | mask;
+    let v = d << 10;
+    for (let i = 14; i >= 10; i--) if ((v >> i) & 1) v ^= 0x537 << (i - 10);
+    return ((d << 10) | v) ^ 0x5412;
+  }
+
+  // ---- Construcción de la matriz ----
+  function build(ver, ecc, codewords, maskChoice) {
+    const size = 17 + 4 * ver;
+    const m = Array.from({ length: size }, () => new Int8Array(size).fill(-1));
+    const res = Array.from({ length: size }, () => new Uint8Array(size));
+    const put = (r, c, v) => { m[r][c] = v; res[r][c] = 1; };
+
+    // Patrones localizadores + separadores
+    for (const [br, bc] of [[0,0],[0,size-7],[size-7,0]]) {
+      for (let r = -1; r <= 7; r++) for (let c = -1; c <= 7; c++) {
+        const rr = br + r, cc = bc + c;
+        if (rr < 0 || cc < 0 || rr >= size || cc >= size) continue;
+        const on = (r >= 0 && r <= 6 && (c === 0 || c === 6)) ||
+                   (c >= 0 && c <= 6 && (r === 0 || r === 6)) ||
+                   (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+        put(rr, cc, on ? 1 : 0);
+      }
+    }
+    // Patrones de sincronización
+    for (let i = 8; i < size - 8; i++) { put(6, i, i % 2 === 0 ? 1 : 0); put(i, 6, i % 2 === 0 ? 1 : 0); }
+    // Patrones de alineación
+    const ac = ALIGN[ver];
+    for (const r of ac) for (const c of ac) {
+      if ((r <= 8 && c <= 8) || (r <= 8 && c >= size - 9) || (r >= size - 9 && c <= 8)) continue;
+      for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++)
+        put(r + dr, c + dc, (Math.max(Math.abs(dr), Math.abs(dc)) !== 1) ? 1 : 0);
+    }
+    // Zonas reservadas de formato
+    for (let i = 0; i < 9; i++) { if (m[8][i] === -1) put(8, i, 0); if (m[i][8] === -1) put(i, 8, 0); }
+    for (let i = 0; i < 8; i++) put(8, size - 1 - i, 0);   // fila 8, columnas size-8..size-1
+    for (let i = 0; i < 7; i++) put(size - 1 - i, 8, 0);   // filas size-7..size-1, columna 8
+    // Módulo siempre oscuro: va en (size-8, 8), después de reservar
+    put(4 * ver + 9, 8, 1);
+    // Información de versión (v7+)
+    if (ver >= 7) {
+      const vi = VERINFO[ver];
+      for (let i = 0; i < 18; i++) {
+        const bit = (vi >> i) & 1, a = Math.floor(i / 3), b = i % 3;
+        put(size - 11 + b, a, bit); put(a, size - 11 + b, bit);
+      }
+    }
+
+    // Colocación de datos en zigzag desde abajo a la derecha
+    const bits = [];
+    for (const cw of codewords) for (let i = 7; i >= 0; i--) bits.push((cw >> i) & 1);
+    let idx = 0, dir = -1, row = size - 1;
+    for (let col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (;;) {
+        for (let c = 0; c < 2; c++) {
+          const cc = col - c;
+          if (!res[row][cc]) m[row][cc] = idx < bits.length ? bits[idx++] : 0;
+        }
+        row += dir;
+        if (row < 0 || row >= size) { row -= dir; dir = -dir; break; }
+      }
+    }
+
+    const MASKS = [
+      (r,c)=>((r+c)%2)===0, (r,c)=>(r%2)===0, (r,c)=>(c%3)===0, (r,c)=>((r+c)%3)===0,
+      (r,c)=>((Math.floor(r/2)+Math.floor(c/3))%2)===0, (r,c)=>(((r*c)%2)+((r*c)%3))===0,
+      (r,c)=>((((r*c)%2)+((r*c)%3))%2)===0, (r,c)=>((((r+c)%2)+((r*c)%3))%2)===0
+    ];
+
+    function withMask(k) {
+      const out = m.map(r => Int8Array.from(r));
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++)
+        if (!res[r][c] && MASKS[k](r, c)) out[r][c] ^= 1;
+      const f = formatBits(ecc, k);
+      for (let i = 0; i < 15; i++) {
+        // El bit más significativo va en (8,0) y (size-1,8): el recorrido i
+        // avanza del bit 14 al 0, no al revés.
+        const bit = (f >> (14 - i)) & 1;
+        if (i < 6) out[8][i] = bit; else if (i < 8) out[8][i + 1] = bit;
+        else if (i === 8) out[7][8] = bit; else out[14 - i][8] = bit;
+        // Copia 2: bits 0-6 en la columna 8, bits 7-14 en la fila 8
+        if (i < 7) out[size - 1 - i][8] = bit; else out[8][size - 15 + i] = bit;
+      }
+      return out;
+    }
+
+    // Penalización para elegir la mejor máscara
+    function penalty(g) {
+      let p = 0;
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+        if (c < size - 1 && r < size - 1) {
+          const v = g[r][c];
+          if (v === g[r][c+1] && v === g[r+1][c] && v === g[r+1][c+1]) p += 3;   // regla 2
+        }
+      }
+      const runs = (get) => {                                                     // regla 1
+        for (let a = 0; a < size; a++) {
+          let run = 1;
+          for (let b = 1; b < size; b++) {
+            if (get(a, b) === get(a, b - 1)) { run++; if (run === 5) p += 3; else if (run > 5) p += 1; }
+            else run = 1;
+          }
+        }
+      };
+      runs((a,b)=>g[a][b]); runs((a,b)=>g[b][a]);
+      const PAT = [1,0,1,1,1,0,1,0,0,0,0];                                        // regla 3
+      const scan = (get) => {
+        for (let a = 0; a < size; a++) for (let b = 0; b + 11 <= size; b++) {
+          let ok = true;
+          for (let i = 0; i < 11; i++) if (get(a, b + i) !== PAT[i]) { ok = false; break; }
+          if (ok) p += 40;
+          ok = true;
+          for (let i = 0; i < 11; i++) if (get(a, b + i) !== PAT[10 - i]) { ok = false; break; }
+          if (ok) p += 40;
+        }
+      };
+      scan((a,b)=>g[a][b]); scan((a,b)=>g[b][a]);
+      let dark = 0;                                                               // regla 4
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) dark += g[r][c];
+      p += Math.floor(Math.abs(dark * 100 / (size * size) - 50) / 5) * 10;
+      return p;
+    }
+
+    if (maskChoice != null) return { grid: withMask(maskChoice), size, mask: maskChoice };
+    let best = null, bestP = Infinity, bestK = 0;
+    for (let k = 0; k < 8; k++) {
+      const g = withMask(k), p = penalty(g);
+      if (p < bestP) { bestP = p; best = g; bestK = k; }
+    }
+    return { grid: best, size, mask: bestK };
+  }
+
+  // ---- API pública ----
+  function encode(text, ecc, forceMask) {
+    ecc = ecc || "Q";
+    const bytes = new TextEncoder().encode(text);
+    let ver = 0;
+    for (let v = 1; v <= 10; v++) {
+      const need = 4 + (v < 10 ? 8 : 16) + 8 * bytes.length;
+      if (dataWords(v, ecc) * 8 >= need) { ver = v; break; }
+    }
+    if (!ver) throw new Error("El texto es demasiado largo para este generador (máximo versión 10).");
+
+    // Flujo de bits: modo byte + longitud + datos
+    const bits = [];
+    const push = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+    push(0b0100, 4);
+    push(bytes.length, ver < 10 ? 8 : 16);
+    for (const b of bytes) push(b, 8);
+
+    const cap = dataWords(ver, ecc) * 8;
+    for (let i = 0; i < 4 && bits.length < cap; i++) bits.push(0);   // terminador
+    while (bits.length % 8) bits.push(0);                             // a byte completo
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let b = 0; for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j];
+      data.push(b);
+    }
+    const PAD = [0xEC, 0x11];
+    for (let i = 0; data.length < dataWords(ver, ecc); i++) data.push(PAD[i % 2]);
+
+    // Reparto en bloques + corrección de errores
+    const [eccPer, groups] = ECB[ecc][ver];
+    const dBlocks = [], eBlocks = [];
+    let off = 0;
+    for (const [n, len] of groups) for (let i = 0; i < n; i++) {
+      const blk = data.slice(off, off + len); off += len;
+      dBlocks.push(blk); eBlocks.push(rsEnc(blk, eccPer));
+    }
+    // Intercalado
+    const out = [];
+    const maxD = Math.max(...dBlocks.map(b => b.length));
+    for (let i = 0; i < maxD; i++) for (const b of dBlocks) if (i < b.length) out.push(b[i]);
+    for (let i = 0; i < eccPer; i++) for (const b of eBlocks) out.push(b[i]);
+    if (out.length !== TOTAL[ver]) throw new Error("Error interno: conteo de palabras inesperado.");
+
+    const built = build(ver, ecc, out, forceMask == null ? null : forceMask);
+    // Bits de relleno finales
+    return { modules: built.grid, size: built.size, version: ver, ecc, mask: built.mask, remainder: REMAIN[ver] };
+  }
+
+  function toSvg(q, opts) {
+    opts = opts || {};
+    const quiet = opts.quiet == null ? 4 : opts.quiet;
+    const dark = opts.dark || "#3B1E2B", light = opts.light || "#ffffff";
+    const n = q.size + quiet * 2;
+    let d = "";
+    for (let r = 0; r < q.size; r++) for (let c = 0; c < q.size; c++)
+      if (q.modules[r][c]) d += "M" + (c + quiet) + " " + (r + quiet) + "h1v1h-1z";
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + n + ' ' + n + '" shape-rendering="crispEdges">' +
+           '<rect width="' + n + '" height="' + n + '" fill="' + light + '"/>' +
+           '<path fill="' + dark + '" d="' + d + '"/></svg>';
+  }
+
+  return { encode, toSvg };
+})();
+
+/* ---------------- Interfaz ---------------- */
+const $ = id => document.getElementById(id);
+let current = null;
+
+function render() {
+  const text = $("url").value.trim();
+  const ecc = $("ecc").value;
+  const err = $("err");
+  $("capOut").innerHTML = "";
+  try {
+    if (!text) throw new Error("Escribe una dirección.");
+    const q = QR.encode(text, ecc);
+    current = { q, text };
+    $("qrbox").innerHTML = QR.toSvg(q, { dark: "#3B1E2B", light: "#ffffff" });
+    const cap = $("cap").value.trim();
+    $("capOut").textContent = cap;
+    const small = document.createElement("small");
+    small.textContent = "Escanea y arma tu tarta";
+    $("capOut").appendChild(small);
+    err.style.display = "none";
+    $("meta").innerHTML =
+      "<b>Versión " + q.version + "</b> — cuadrícula de " + q.size + "×" + q.size + " módulos.<br>" +
+      "<b>Corrección " + q.ecc + "</b> — el código se sigue leyendo con hasta " +
+      ({L:"7%",M:"15%",Q:"25%",H:"30%"})[q.ecc] + " del área dañada o tapada.<br>" +
+      "Máscara " + q.mask + " (elegida automáticamente por menor penalización).<br>" +
+      "Apunta a: <b>" + text.replace(/</g, "&lt;") + "</b><br><br>" +
+      "Imprímelo de <b>3 cm o más</b> por lado. Deja el margen blanco alrededor: sin él muchos lectores fallan.";
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = "block";
+    $("qrbox").innerHTML = "";
+    $("meta").innerHTML = "";
+    current = null;
+  }
+}
+
+function download(name, blob) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+$("dlSvg").addEventListener("click", function () {
+  if (!current) return;
+  download("qr-tartas-la-madresota.svg", new Blob([QR.toSvg(current.q, { dark: "#3B1E2B" })], { type: "image/svg+xml" }));
+});
+
+$("dlPng").addEventListener("click", function () {
+  if (!current) return;
+  const q = current.q, quiet = 4, scale = 24, n = q.size + quiet * 2;
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = n * scale;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = "#3B1E2B";
+  for (let r = 0; r < q.size; r++) for (let c = 0; c < q.size; c++)
+    if (q.modules[r][c]) ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+  cv.toBlob(b => download("qr-tartas-la-madresota.png", b), "image/png");
+});
+
+["url", "ecc", "cap"].forEach(id => $(id).addEventListener("input", render));
+$("ecc").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>

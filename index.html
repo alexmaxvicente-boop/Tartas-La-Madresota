@@ -508,7 +508,7 @@
         <h3>Contacto</h3>
         <div class="links">
           <a id="waFooter" href="#" target="_blank" rel="noopener">WhatsApp 55 7340 8147</a>
-          <a href="https://www.instagram.com/tartas_la_madresota" target="_blank" rel="noopener">Instagram @tartas_la_madresota</a>
+          <a id="igFooter" href="https://www.instagram.com/tartas_la_madresota" target="_blank" rel="noopener">Instagram @tartas_la_madresota</a>
         </div>
       </div>
       <div>
@@ -531,6 +531,7 @@
 
 </div>
 
+<script src="config.js"></script>
 <script>
 (function () {
   "use strict";
@@ -933,15 +934,88 @@
 
   /* ====== Arranque ====== */
 
-  var general = wa("Hola, quiero pedir una tarta 🍓");
-  document.getElementById("waFloat").href = general;
-  document.getElementById("waFooter").href = general;
-  document.getElementById("addBtn").addEventListener("click", addToOrder);
+  // Los datos de arriba son el respaldo. Si existe datos.json (el archivo que
+  // publica el panel de administración), esos ganan.
+  // Los datos vienen de fuera (archivo o base). Se validan antes de usarlos:
+  // un href con "javascript:" ejecutaría código al hacer clic.
+  function urlSegura(u) {
+    if (typeof u !== "string") return null;
+    u = u.trim();
+    return /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : null;
+  }
+  function soloDigitos(v) {
+    var s = String(v == null ? "" : v).replace(/\D/g, "");
+    return (s.length >= 10 && s.length <= 15) ? s : null;
+  }
+  function textoCorto(v, max) {
+    if (typeof v !== "string") return null;
+    v = v.trim();
+    return v ? v.slice(0, max || 120) : null;
+  }
 
-  renderBuilder();
-  renderMenu();
-  renderGallery();
-  renderFaqs();
+  function aplicarDatos(d) {
+    if (!d || typeof d !== "object") return;
+    if (d.contacto) {
+      var tel = soloDigitos(d.contacto.whatsapp);
+      if (tel) WHATSAPP = tel;
+      var liga = urlSegura(d.contacto.instagram);
+      if (liga) INSTAGRAM = liga;
+
+      var wf = document.getElementById("waFooter"), ig = document.getElementById("igFooter");
+      var telV = textoCorto(d.contacto.whatsappVisible, 40);
+      if (telV) wf.textContent = "WhatsApp " + telV;
+      if (liga) ig.href = liga;
+      var igV = textoCorto(d.contacto.instagramVisible, 40);
+      if (igV) ig.textContent = "Instagram " + igV;
+    }
+    if (d.frutas && Object.keys(d.frutas).length) FRUIT = d.frutas;
+    if (d.ordenFrutas && d.ordenFrutas.length)    FRUIT_ORDER = d.ordenFrutas.filter(function (f) { return FRUIT[f]; });
+    if (d.tamanos && d.tamanos.length)            SIZES = d.tamanos;
+    if (d.tartas && d.tartas.length)              TARTAS = d.tartas;
+    if (d.galeria && d.galeria.length)            GALLERY = d.galeria;
+    if (d.faqs && d.faqs.length)                  FAQS = d.faqs;
+
+    // Deja el armador en un estado válido con los datos nuevos
+    var ids = SIZES.map(function (s) { return s.id; });
+    if (ids.indexOf(state.size) === -1) state.size = SIZES[0].id;
+    state.picked = state.picked.filter(function (f) { return FRUIT[f]; }).slice(0, maxOf());
+  }
+
+  function arrancar() {
+    var general = wa("Hola, quiero pedir una tarta 🍓");
+    document.getElementById("waFloat").href = general;
+    document.getElementById("waFooter").href = general;
+    document.getElementById("addBtn").addEventListener("click", addToOrder);
+
+    renderBuilder();
+    renderMenu();
+    renderGallery();
+    renderFaqs();
+  }
+
+  // De dónde salen los datos, en orden: base de datos → datos.json → lo de arriba.
+  function desdeArchivo() {
+    return fetch("datos.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; });
+  }
+  function desdeBase() {
+    var c = window.MADRESOTA_CONFIG || {};
+    if (!c.supabaseUrl || !c.supabaseKey) return Promise.reject();
+    var u = c.supabaseUrl.replace(/\/+$/, "") + "/rest/v1/contenido?id=eq.1&select=datos";
+    return fetch(u, { headers: { apikey: c.supabaseKey, Authorization: "Bearer " + c.supabaseKey } })
+      .then(function (r) { if (!r.ok) throw new Error("sin base"); return r.json(); })
+      .then(function (a) { if (!a || !a[0] || !a[0].datos) throw new Error("vacia"); return a[0].datos; });
+  }
+
+  if (window.fetch) {
+    desdeBase()
+      .catch(desdeArchivo)
+      .then(function (d) { aplicarDatos(d); })
+      .catch(function () { /* se queda el respaldo de arriba */ })
+      .then(arrancar);
+  } else {
+    arrancar();
+  }
 })();
 </script>
 </body>

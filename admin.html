@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel — Tartas La Madresota</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%233B1E2B'/><circle cx='16' cy='16' r='7' fill='%23FCE9AB'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700;6..96,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#FCE9AB;color:#3B1E2B;font-family:"DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:'Bodoni Moda',serif;margin:0}
+  a{color:#C42B34}
+
+  /* ---------- Acceso ---------- */
+  .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-box{width:100%;max-width:390px;background:#fff;padding:32px;box-shadow:0 30px 70px -40px rgba(196,43,52,.6)}
+  .login-box h1{font-size:30px;font-weight:900;text-transform:uppercase;color:#C42B34;line-height:1;margin-bottom:6px}
+  .login-box p{margin:0 0 22px;font-size:14px;color:#6B5B54;line-height:1.5}
+
+  label{display:block;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C42B34;margin:0 0 6px}
+  input,select,textarea{width:100%;font-family:inherit;font-size:15px;padding:11px 13px;border:1.5px solid rgba(59,30,43,.35);background:#fff;color:#3B1E2B;min-height:44px}
+  textarea{min-height:70px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2.5px solid #FC8A2D;outline-offset:1px;border-color:#C42B34}
+  .field{margin-bottom:14px}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+
+  button{font-family:inherit;cursor:pointer;border:0;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px;padding:13px 18px;min-height:44px;transition:filter 160ms ease,transform 120ms ease}
+  button:active{transform:translateY(1px)}
+  .b-red{background:#C42B34;color:#FCE9AB}
+  .b-red:hover{filter:brightness(1.12)}
+  .b-line{background:#fff;color:#C42B34;box-shadow:inset 0 0 0 1.5px #C42B34}
+  .b-line:hover{background:#C42B34;color:#fff}
+  .b-warn{background:#8E2B54;color:#FCE9AB}
+  .b-warn:hover{filter:brightness(1.15)}
+  .b-sm{padding:8px 12px;min-height:36px;font-size:11px}
+  .err{background:#C42B34;color:#fff;padding:11px 14px;font-size:14px;margin-bottom:14px;display:none}
+
+  /* ---------- Estructura ---------- */
+  .app{display:none}
+  header.bar{position:sticky;top:0;z-index:40;background:#3B1E2B;color:#FCE9AB;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  header.bar b{font-family:'Bodoni Moda',serif;font-weight:900;letter-spacing:.2em;text-transform:uppercase;font-size:15px}
+  .tabs{display:flex;gap:2px;flex-wrap:wrap;background:#3B1E2B;padding:0 12px 12px}
+  .tab{background:rgba(252,233,171,.12);color:#FCE9AB;padding:10px 14px;min-height:40px;font-size:11px}
+  .tab.on{background:#FCE9AB;color:#3B1E2B}
+  main{padding:22px 18px 70px;max-width:1100px;margin:0 auto}
+  section.page{display:none}
+  section.page.on{display:block}
+  .page h2{font-size:26px;font-weight:900;text-transform:uppercase;color:#C42B34;margin-bottom:4px}
+  .page .sub{margin:0 0 20px;font-size:14px;color:#6B5B54;line-height:1.5;max-width:65ch}
+
+  .card{background:#fff;padding:18px;margin-bottom:14px;box-shadow:0 2px 0 rgba(59,30,43,.08)}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .card-head strong{font-family:'Bodoni Moda',serif;font-size:20px}
+  .row-btns{display:flex;gap:6px;flex-wrap:wrap}
+  .thumb{width:82px;height:82px;object-fit:cover;flex:none;background:#eee}
+  .flexrow{display:flex;gap:14px;align-items:flex-start}
+  .flexrow>div{flex:1;min-width:0}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:0;padding:7px 11px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:.32;filter:grayscale(.6)}
+  .chip.on{opacity:1;filter:none}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid rgba(59,30,43,.12);vertical-align:top}
+  th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#C42B34;background:#fff8e4}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .scroll{overflow-x:auto}
+  .empty{padding:22px;background:#fff;color:#6B5B54;font-size:14px}
+  .pill-info{display:inline-block;background:#FC8A2D;color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 9px}
+  .aviso{background:#fff3cd;border-left:5px solid #FC8A2D;padding:13px 15px;font-size:13.5px;line-height:1.55;margin-bottom:18px;color:#5a4630}
+  .ok{background:#9E9820;color:#fff;padding:11px 14px;font-size:14px;margin-bottom:14px;display:none}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:#3B1E2B;color:#FCE9AB;padding:14px 22px;font-size:14px;z-index:90;display:none;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+
+<!-- ============ ACCESO ============ -->
+<div class="login" id="login">
+  <form class="login-box" id="loginForm" autocomplete="off">
+    <h1>Panel</h1>
+    <p>Tartas La Madresota — solo para la propietaria.</p>
+    <div class="err" id="loginErr"></div>
+    <div class="field">
+      <label for="u">Usuario</label>
+      <input id="u" type="text" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="p">Contraseña</label>
+      <input id="p" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="b-red" type="submit" style="width:100%">Entrar</button>
+  </form>
+</div>
+
+<!-- ============ PANEL ============ -->
+<div class="app" id="app">
+  <header class="bar">
+    <b>Madresota · Panel</b>
+    <div class="row-btns">
+      <button class="b-line b-sm" id="verSitio" type="button">Ver el sitio</button>
+      <button class="b-line b-sm" id="salir" type="button">Salir</button>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+
+  <main>
+    <!-- Tartas -->
+    <section class="page" data-page="tartas">
+      <h2>Tartas del menú</h2>
+      <p class="sub">Cambia nombre, precio, descripción, foto e ingredientes. El orden aquí es el orden en que salen en la página.</p>
+      <div class="row-btns" style="margin-bottom:16px">
+        <button class="b-red" id="nuevaTarta" type="button">+ Nueva tarta</button>
+      </div>
+      <div id="listaTartas"></div>
+    </section>
+
+    <!-- Tamaños -->
+    <section class="page" data-page="tamanos">
+      <h2>Tamaños</h2>
+      <p class="sub">Los tamaños del armador. "Máx. ingredientes" es cuántas porciones de fruta admite ese tamaño. "Texto del pedido" es como se escribe en el WhatsApp.</p>
+      <div class="row-btns" style="margin-bottom:16px">
+        <button class="b-red" id="nuevoTamano" type="button">+ Nuevo tamaño</button>
+      </div>
+      <div id="listaTamanos"></div>
+    </section>
+
+    <!-- Ingredientes -->
+    <section class="page" data-page="ingredientes">
+      <h2>Ingredientes</h2>
+      <p class="sub">Las frutas que se pueden elegir. El color es el de la etiqueta que se ve en la página.</p>
+      <div class="card">
+        <div class="grid3">
+          <div class="field"><label for="ingNombre">Nombre</label><input id="ingNombre" type="text" placeholder="Ej. Mandarina"></div>
+          <div class="field"><label for="ingBg">Color de fondo</label><input id="ingBg" type="color" value="#C42B34"></div>
+          <div class="field"><label for="ingFg">Color de letra</label><input id="ingFg" type="color" value="#FCE9AB"></div>
+        </div>
+        <button class="b-red" id="addIng" type="button">Agregar ingrediente</button>
+      </div>
+      <div id="listaIng"></div>
+    </section>
+
+    <!-- Fotos -->
+    <section class="page" data-page="fotos">
+      <h2>Fotos</h2>
+      <p class="sub">Sube una foto y aquí se recorta a cuadro y se comprime para que la página cargue rápido. Después descárgala y súbela a la carpeta <b>img/</b> del sitio.</p>
+      <div class="card">
+        <div class="field"><label for="fotoFile">Elegir foto del celular o la computadora</label><input id="fotoFile" type="file" accept="image/*"></div>
+        <div class="field"><label for="fotoNombre">Nombre del archivo</label><input id="fotoNombre" type="text" placeholder="ej. tarta-mandarina"></div>
+        <div id="fotoPrev"></div>
+      </div>
+      <h3 style="font-size:18px;margin:22px 0 10px">Fotos que ya usa el sitio</h3>
+      <div id="listaFotos"></div>
+    </section>
+
+    <!-- Pedidos -->
+    <section class="page" data-page="pedidos">
+      <h2>Pedidos</h2>
+      <div class="aviso" id="avisoPedidos"></div>
+      <div class="card">
+        <div class="grid2">
+          <div class="field"><label for="pFecha">Fecha</label><input id="pFecha" type="date"></div>
+          <div class="field"><label for="pCliente">Cliente (opcional)</label><input id="pCliente" type="text" placeholder="Nombre o teléfono"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="pTamano">Tamaño</label><select id="pTamano"></select></div>
+          <div class="field"><label for="pCant">Cuántas tartas</label><input id="pCant" type="number" min="1" step="1" value="1"></div>
+        </div>
+        <div class="field">
+          <label>Ingredientes que llevó <span id="pConteo" style="color:#6B5B54;letter-spacing:0">— toca para sumar porciones</span></label>
+          <div class="chips" id="pFrutas"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="pPrecio">Total cobrado ($)</label><input id="pPrecio" type="number" min="0" step="1" placeholder="0"></div>
+          <div class="field"><label for="pNota">Nota (opcional)</label><input id="pNota" type="text" placeholder="Ej. entrega en Coyoacán"></div>
+        </div>
+        <button class="b-red" id="addPedido" type="button">Registrar pedido</button>
+      </div>
+      <div id="listaPedidos"></div>
+    </section>
+
+    <!-- Reportes -->
+    <section class="page" data-page="reportes">
+      <h2>Reportes</h2>
+      <p class="sub">Se calculan con los pedidos que registres. Elige el periodo.</p>
+      <div class="card">
+        <div class="grid3">
+          <div class="field"><label for="rPeriodo">Periodo</label>
+            <select id="rPeriodo">
+              <option value="7">Últimos 7 días</option>
+              <option value="30">Últimos 30 días</option>
+              <option value="90">Últimos 90 días</option>
+              <option value="0">Todo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="reporte"></div>
+    </section>
+
+    <!-- Historial -->
+    <section class="page" data-page="historial">
+      <h2>Historial de precios</h2>
+      <p class="sub">Cada vez que cambias un precio aquí queda registrado, con el precio anterior y el nuevo.</p>
+      <div id="listaHistorial"></div>
+    </section>
+
+    <!-- Publicar -->
+    <section class="page" data-page="publicar">
+      <h2>Publicar cambios</h2>
+      <div class="aviso" id="avisoModo"></div>
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:8px">1 · Descarga el archivo</h3>
+        <p class="sub" style="margin-bottom:14px">Este archivo lleva tartas, tamaños, ingredientes, preguntas y contacto.</p>
+        <button class="b-red" id="dlDatos" type="button">Descargar datos.json</button>
+      </div>
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:8px">2 · Respaldo completo</h3>
+        <p class="sub" style="margin-bottom:14px">Incluye además los pedidos registrados y el historial de precios. Guárdalo cada tanto: si cambias de celular o borras el navegador, sin respaldo se pierde.</p>
+        <div class="row-btns">
+          <button class="b-line" id="dlBackup" type="button">Descargar respaldo</button>
+          <label class="b-line" style="display:inline-flex;align-items:center;padding:13px 18px;letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:700;cursor:pointer;margin:0">
+            Restaurar respaldo
+            <input id="upBackup" type="file" accept="application/json" style="display:none">
+          </label>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:8px">Descartar mis cambios</h3>
+        <p class="sub" style="margin-bottom:14px">Vuelve a como está el sitio publicado ahora. No borra los pedidos registrados.</p>
+        <button class="b-warn" id="descartar" type="button">Descartar cambios</button>
+      </div>
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:8px">Contacto del negocio</h3>
+        <div class="grid2">
+          <div class="field"><label for="cWa">WhatsApp (con 521)</label><input id="cWa" type="text"></div>
+          <div class="field"><label for="cWaV">Como se ve escrito</label><input id="cWaV" type="text"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="cIg">Liga de Instagram</label><input id="cIg" type="text"></div>
+          <div class="field"><label for="cIgV">Usuario visible</label><input id="cIgV" type="text"></div>
+        </div>
+        <button class="b-red" id="guardarContacto" type="button">Guardar contacto</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ============ Base de datos (opcional) ============
+     Si config.js tiene las claves, el panel guarda en vivo.
+     Si no, sigue funcionando con datos.json y este dispositivo. */
+  var CFG = window.MADRESOTA_CONFIG || {};
+  var DB = {
+    activo: !!(CFG.supabaseUrl && CFG.supabaseKey),
+    url: (CFG.supabaseUrl || "").replace(/\/+$/, ""),
+    key: CFG.supabaseKey || "",
+    token: null,
+    cab: function (extra) {
+      var h = { apikey: this.key, "Content-Type": "application/json" };
+      h.Authorization = "Bearer " + (this.token || this.key);
+      if (extra) for (var k in extra) h[k] = extra[k];
+      return h;
+    },
+    login: function (usuario, pass) {
+      var correo = String(usuario).toLowerCase() + "@" + (CFG.dominioUsuario || "local");
+      return fetch(this.url + "/auth/v1/token?grant_type=password", {
+        method: "POST",
+        headers: { apikey: this.key, "Content-Type": "application/json" },
+        body: JSON.stringify({ email: correo, password: pass })
+      }).then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.access_token) { DB.token = j.access_token; return true; } return false; })
+        .catch(function () { return false; });
+    },
+    leerContenido: function () {
+      return fetch(this.url + "/rest/v1/contenido?id=eq.1&select=datos", { headers: this.cab() })
+        .then(function (r) { return r.json(); })
+        .then(function (a) { return (a && a[0]) ? a[0].datos : null; });
+    },
+    sembrar: function (d) {
+      return fetch(this.url + "/rest/v1/contenido", {
+        method: "POST", headers: this.cab({ Prefer: "resolution=merge-duplicates" }),
+        body: JSON.stringify({ id: 1, datos: d })
+      }).then(function (r) { return r.ok; });
+    },
+    guardarContenido: function (d) {
+      return fetch(this.url + "/rest/v1/contenido?id=eq.1", {
+        method: "PATCH", headers: this.cab(),
+        body: JSON.stringify({ datos: d, actualizado: new Date().toISOString() })
+      }).then(function (r) { return r.ok; });
+    },
+    leerPedidos: function () {
+      return fetch(this.url + "/rest/v1/pedidos?select=*&order=fecha.desc,id.desc", { headers: this.cab() })
+        .then(function (r) { return r.json(); });
+    },
+    agregarPedido: function (p) {
+      return fetch(this.url + "/rest/v1/pedidos", {
+        method: "POST", headers: this.cab({ Prefer: "return=representation" }),
+        body: JSON.stringify(p)
+      }).then(function (r) { return r.json(); });
+    },
+    borrarPedido: function (id) {
+      return fetch(this.url + "/rest/v1/pedidos?id=eq." + encodeURIComponent(id), {
+        method: "DELETE", headers: this.cab()
+      }).then(function (r) { return r.ok; });
+    }
+  };
+
+  /* ============ SHA-256 (sin dependencias, funciona también en file://) ============ */
+  function sha256(ascii) {
+    function rr(v, a) { return (v >>> a) | (v << (32 - a)); }
+    var mp = Math.pow, maxWord = mp(2, 32), i, j, result = "", words = [];
+    var asciiBitLength = ascii.length * 8;
+    var hash = [], k = [], primeCounter = 0, isComposite = {};
+    for (var c = 2; primeCounter < 64; c++) {
+      if (!isComposite[c]) {
+        for (i = 0; i < 313; i += c) isComposite[i] = c;
+        hash[primeCounter] = (mp(c, .5) * maxWord) | 0;
+        k[primeCounter++] = (mp(c, 1 / 3) * maxWord) | 0;
+      }
+    }
+    ascii += "\x80";
+    while (ascii.length % 64 - 56) ascii += "\x00";
+    for (i = 0; i < ascii.length; i++) {
+      j = ascii.charCodeAt(i);
+      if (j >> 8) return "";
+      words[i >> 2] |= j << ((3 - i) % 4) * 8;
+    }
+    words[words.length] = (asciiBitLength / maxWord) | 0;
+    words[words.length] = asciiBitLength;
+    for (j = 0; j < words.length;) {
+      var w = words.slice(j, j += 16), oldHash = hash.slice(0, 8);
+      hash = hash.slice(0, 8);
+      for (i = 0; i < 64; i++) {
+        var w15 = w[i - 15], w2 = w[i - 2], a = hash[0], e = hash[4];
+        var t1 = hash[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & hash[5]) ^ ((~e) & hash[6])) + k[i]
+          + (w[i] = (i < 16) ? w[i] : (w[i - 16] + (rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3)) + w[i - 7]
+            + (rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10))) | 0);
+        var t2 = (rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+        hash = [(t1 + t2) | 0].concat(hash);
+        hash[4] = (hash[4] + t1) | 0;
+      }
+      for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+    for (i = 0; i < 8; i++) for (j = 3; j + 1; j--) {
+      var b = (hash[i] >> (j * 8)) & 255;
+      result += ((b < 16) ? 0 : "") + b.toString(16);
+    }
+    return result;
+  }
+  function utf8(s) { return unescape(encodeURIComponent(s)); }
+
+  /* ============ Credenciales ============
+     Ya no viven aquí: salen de config.js. Si la base de datos está
+     conectada, ni siquiera se usan (manda el login de Supabase). */
+  var USUARIO = CFG.usuarioLocal || "";
+  var SAL     = CFG.salLocal || "";
+  var HASH    = CFG.hashLocal || "";
+
+  /* ============ Freno de intentos de acceso ============
+     Esto es un freno del navegador, no una defensa del servidor:
+     evita que alguien pruebe contraseñas a mano desde el formulario.
+     El límite real contra ataques lo pone Supabase en su lado. */
+  var K_INTENTOS = "madresota.intentos";
+  var MAX_INTENTOS = CFG.maxIntentos || 5;
+  var BLOQUEO_MS = (CFG.bloqueoSegundos || 60) * 1000;
+
+  function estadoIntentos() {
+    var s;
+    try { s = JSON.parse(localStorage.getItem(K_INTENTOS)) || { n: 0, hasta: 0 }; }
+    catch (e) { s = { n: 0, hasta: 0 }; }
+    return s;
+  }
+  function segundosBloqueo() {
+    var s = estadoIntentos();
+    var falta = s.hasta - Date.now();
+    return falta > 0 ? Math.ceil(falta / 1000) : 0;
+  }
+  function fallo() {
+    var s = estadoIntentos();
+    s.n = (s.n || 0) + 1;
+    if (s.n >= MAX_INTENTOS) { s.hasta = Date.now() + BLOQUEO_MS; s.n = 0; }
+    try { localStorage.setItem(K_INTENTOS, JSON.stringify(s)); } catch (e) {}
+  }
+  function limpiarIntentos() { try { localStorage.removeItem(K_INTENTOS); } catch (e) {} }
+
+  /* ============ Almacenamiento ============ */
+  var K_DATOS = "madresota.datos", K_PEDIDOS = "madresota.pedidos", K_SESION = "madresota.sesion";
+  var datos = null, pedidos = [], fotosNuevas = {};   // ruta -> dataURL (solo para ver aquí)
+
+  function leer(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch (e) { return def; } }
+  function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("No se pudo guardar: el navegador está lleno."); } }
+  var guardaT;
+  function guardarDatos() {
+    datos.actualizado = hoy();
+    if (DB.activo) {
+      // Se agrupa medio segundo para no mandar una petición por cada tecla.
+      clearTimeout(guardaT);
+      guardaT = setTimeout(function () {
+        DB.guardarContenido(datos).then(function (ok) {
+          if (!ok) toast("No se pudo guardar en la base de datos.");
+        });
+      }, 600);
+      return;
+    }
+    guardar(K_DATOS, datos);
+  }
+  function guardarPedidos() { if (!DB.activo) guardar(K_PEDIDOS, pedidos); }
+
+  function hoy() { var d = new Date(); return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
+  function p2(n) { return (n < 10 ? "0" : "") + n; }
+
+  var toastT;
+  function toast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(toastT); toastT = setTimeout(function () { t.style.display = "none"; }, 2600);
+  }
+
+  function el(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
+  function $(id) { return document.getElementById(id); }
+
+  function descargar(nombre, contenido) {
+    var b = new Blob([contenido], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(b); a.download = nombre; a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+  }
+
+  function verFoto(ruta) { return fotosNuevas[ruta] || ruta; }
+
+  /* ============ Acceso ============ */
+  function fallaLogin(msg) {
+    var e2 = $("loginErr");
+    e2.textContent = msg || "Usuario o contraseña incorrectos.";
+    e2.style.display = "block";
+    $("p").value = "";
+  }
+
+  $("loginForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var u = $("u").value.trim(), p = $("p").value;
+    var boton = ev.target.querySelector("button[type=submit]");
+
+    var espera = segundosBloqueo();
+    if (espera > 0) {
+      fallaLogin("Demasiados intentos. Espera " + espera + " segundos.");
+      return;
+    }
+
+    if (DB.activo) {
+      // Login de verdad: lo valida el servidor de Supabase.
+      boton.disabled = true; boton.textContent = "Entrando…";
+      DB.login(u, p).then(function (ok) {
+        boton.disabled = false; boton.textContent = "Entrar";
+        if (ok) { limpiarIntentos(); abrir(); }
+        else { fallo(); fallaLogin("Usuario o contraseña incorrectos."); }
+      });
+      return;
+    }
+    // Sin base de datos: comprobación local.
+    if (!HASH) { fallaLogin("Falta configurar el acceso en config.js."); return; }
+    if (u === USUARIO && sha256(utf8(SAL + p)) === HASH) {
+      limpiarIntentos();
+      try { sessionStorage.setItem(K_SESION, "1"); } catch (e) {}
+      abrir();
+    } else {
+      fallo();
+      fallaLogin();
+    }
+  });
+  $("salir").addEventListener("click", function () {
+    try { sessionStorage.removeItem(K_SESION); } catch (e) {}
+    location.reload();
+  });
+  $("verSitio").addEventListener("click", function () { window.open("index.html", "_blank"); });
+
+  function abrir() {
+    $("login").style.display = "none";
+    $("app").style.display = "block";
+    cargarDatos();
+  }
+
+  /* ============ Carga de datos ============ */
+  function vacio() {
+    return { version: 1, contacto: {}, frutas: {}, ordenFrutas: [], tamanos: [], tartas: [], galeria: [], faqs: [], historialPrecios: [] };
+  }
+  function normalizaPedido(p) {
+    return {
+      id: p.id, fecha: p.fecha, cliente: p.cliente || "", tamano: p.tamano,
+      cantidad: parseInt(p.cantidad, 10) || 1,
+      frutas: p.frutas || [], total: parseFloat(p.total) || 0, nota: p.nota || ""
+    };
+  }
+
+  function cargarDatos() {
+    if (DB.activo) {
+      DB.leerContenido().then(function (d) {
+        if (d) { datos = d; return DB.leerPedidos(); }
+        // Primera vez: la base está vacía, la sembramos con datos.json
+        return fetch("datos.json", { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (base) {
+            datos = base || vacio();
+            return DB.sembrar(datos).then(function () { return DB.leerPedidos(); });
+          });
+      }).then(function (ps) {
+        pedidos = Array.isArray(ps) ? ps.map(normalizaPedido) : [];
+        iniciar();
+      }).catch(function () {
+        datos = vacio(); pedidos = [];
+        iniciar();
+        toast("No se pudo conectar con la base de datos. Revisa config.js y las políticas del SQL.");
+      });
+      return;
+    }
+
+    var borrador = leer(K_DATOS, null);
+    pedidos = leer(K_PEDIDOS, []);
+    if (borrador) { datos = borrador; iniciar(); return; }
+    fetch("datos.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) throw new Error("sin datos");
+        datos = d; iniciar();
+      })
+      .catch(function () {
+        datos = vacio();
+        iniciar();
+        toast("No se encontró datos.json. Abre el panel desde el sitio publicado o restaura un respaldo.");
+      });
+  }
+
+  /* ============ Pestañas ============ */
+  var PAGINAS = [
+    ["tartas", "Tartas"], ["tamanos", "Tamaños"], ["ingredientes", "Ingredientes"],
+    ["fotos", "Fotos"], ["pedidos", "Pedidos"], ["reportes", "Reportes"],
+    ["historial", "Precios"], ["publicar", "Publicar"]
+  ];
+  function iniciarTabs() {
+    var nav = $("tabs"); nav.textContent = "";
+    PAGINAS.forEach(function (p, i) {
+      var b = el("button", "tab" + (i === 0 ? " on" : ""), p[1]);
+      b.type = "button"; b.dataset.go = p[0];
+      b.addEventListener("click", function () {
+        [].forEach.call(nav.children, function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        [].forEach.call(document.querySelectorAll("section.page"), function (s) {
+          s.classList.toggle("on", s.dataset.page === p[0]);
+        });
+        if (p[0] === "reportes") pintarReporte();
+      });
+      nav.appendChild(b);
+    });
+    document.querySelector('section.page[data-page="tartas"]').classList.add("on");
+  }
+
+  /* ============ Precios: registro de cambios ============ */
+  function anotarPrecio(que, antes, ahora) {
+    if (antes === ahora) return;
+    datos.historialPrecios = datos.historialPrecios || [];
+    datos.historialPrecios.unshift({ fecha: hoy(), que: que, antes: antes, ahora: ahora });
+  }
+
+  /* ============ Selector de frutas reusable ============ */
+  function chipsFrutas(cont, seleccion, onToggle, conConteo) {
+    cont.textContent = "";
+    (datos.ordenFrutas || Object.keys(datos.frutas)).forEach(function (id) {
+      var f = datos.frutas[id]; if (!f) return;
+      var n = seleccion.filter(function (x) { return x === id; }).length;
+      var b = el("button", "chip" + (n ? " on" : ""), f.label + (conConteo && n > 1 ? " ×" + n : ""));
+      b.type = "button";
+      b.style.background = f.bg; b.style.color = f.fg;
+      b.addEventListener("click", function () { onToggle(id); });
+      cont.appendChild(b);
+    });
+  }
+
+  /* ============ TARTAS ============ */
+  function pintarTartas() {
+    var cont = $("listaTartas"); cont.textContent = "";
+    if (!datos.tartas.length) { cont.appendChild(el("div", "empty", "Todavía no hay tartas.")); return; }
+    datos.tartas.forEach(function (t, i) {
+      var c = el("div", "card");
+
+      var head = el("div", "card-head");
+      head.appendChild(el("strong", null, t.name || "(sin nombre)"));
+      var btns = el("div", "row-btns");
+      if (i > 0) btns.appendChild(mkBtn("↑", "b-line b-sm", function () { mover(datos.tartas, i, -1); guardarDatos(); pintarTartas(); }));
+      if (i < datos.tartas.length - 1) btns.appendChild(mkBtn("↓", "b-line b-sm", function () { mover(datos.tartas, i, 1); guardarDatos(); pintarTartas(); }));
+      btns.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
+        if (confirm("¿Borrar «" + t.name + "» del menú?")) { datos.tartas.splice(i, 1); guardarDatos(); pintarTartas(); toast("Tarta borrada"); }
+      }));
+      head.appendChild(btns);
+      c.appendChild(head);
+
+      var fila = el("div", "flexrow");
+      var img = el("img", "thumb"); img.src = verFoto(t.img); img.alt = "";
+      fila.appendChild(img);
+      var campos = el("div");
+
+      campos.appendChild(campo("Nombre", "text", t.name, function (v) { t.name = v; guardarDatos(); }));
+      var g = el("div", "grid2");
+      g.appendChild(campo("Precio", "text", t.price, function (v) {
+        anotarPrecio("Tarta " + t.name, t.price, v); t.price = v; guardarDatos(); pintarHistorial();
+      }));
+      g.appendChild(campo("Foto (ruta)", "text", t.img, function (v) { t.img = v; guardarDatos(); pintarTartas(); }));
+      campos.appendChild(g);
+      campos.appendChild(campo("Descripción corta (opcional)", "text", t.note || "", function (v) { t.note = v; guardarDatos(); }));
+      campos.appendChild(campo("Texto del pedido en WhatsApp (opcional)", "text", t.pedido || "", function (v) {
+        if (v) t.pedido = v; else delete t.pedido; guardarDatos();
+      }));
+
+      var lab = el("label", null, "Ingredientes"); campos.appendChild(lab);
+      var ch = el("div", "chips");
+      t.fruits = t.fruits || [];
+      chipsFrutas(ch, t.fruits, function (id) {
+        var k = t.fruits.indexOf(id);
+        if (k === -1) t.fruits.push(id); else t.fruits.splice(k, 1);
+        guardarDatos(); pintarTartas();
+      });
+      campos.appendChild(ch);
+
+      fila.appendChild(campos);
+      c.appendChild(fila);
+      cont.appendChild(c);
+    });
+  }
+
+  function mover(arr, i, d) { var x = arr.splice(i, 1)[0]; arr.splice(i + d, 0, x); }
+  function mkBtn(txt, cls, fn) { var b = el("button", cls, txt); b.type = "button"; b.addEventListener("click", fn); return b; }
+
+  function campo(etiqueta, tipo, valor, onChange) {
+    var d = el("div", "field");
+    d.appendChild(el("label", null, etiqueta));
+    var i = document.createElement(tipo === "textarea" ? "textarea" : "input");
+    if (tipo !== "textarea") i.type = tipo;
+    i.value = valor == null ? "" : valor;
+    i.addEventListener("change", function () { onChange(i.value); toast("Guardado"); });
+    d.appendChild(i);
+    return d;
+  }
+
+  $("nuevaTarta").addEventListener("click", function () {
+    datos.tartas.push({ name: "Tarta nueva", fruits: [], price: "$50", img: (datos.galeria[0] || {}).img || "", pos: "50% 50%", note: "" });
+    guardarDatos(); pintarTartas(); toast("Tarta agregada — edítala abajo");
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+  /* ============ TAMAÑOS ============ */
+  function pintarTamanos() {
+    var cont = $("listaTamanos"); cont.textContent = "";
+    datos.tamanos.forEach(function (s, i) {
+      var c = el("div", "card");
+      var head = el("div", "card-head");
+      head.appendChild(el("strong", null, s.label));
+      var btns = el("div", "row-btns");
+      if (i > 0) btns.appendChild(mkBtn("↑", "b-line b-sm", function () { mover(datos.tamanos, i, -1); guardarDatos(); pintarTamanos(); }));
+      if (i < datos.tamanos.length - 1) btns.appendChild(mkBtn("↓", "b-line b-sm", function () { mover(datos.tamanos, i, 1); guardarDatos(); pintarTamanos(); }));
+      btns.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
+        if (confirm("¿Borrar el tamaño «" + s.label + "»?")) { datos.tamanos.splice(i, 1); guardarDatos(); pintarTamanos(); llenarSelectTamanos(); }
+      }));
+      head.appendChild(btns);
+      c.appendChild(head);
+
+      var fila = el("div", "flexrow");
+      var img = el("img", "thumb"); img.src = verFoto(s.img); img.alt = "";
+      fila.appendChild(img);
+      var campos = el("div");
+      var g1 = el("div", "grid2");
+      g1.appendChild(campo("Nombre en el botón", "text", s.label, function (v) { s.label = v; guardarDatos(); pintarTamanos(); }));
+      g1.appendChild(campo("Precio", "text", s.price, function (v) {
+        anotarPrecio("Tamaño " + s.label, s.price, v); s.price = v; guardarDatos(); pintarHistorial();
+      }));
+      campos.appendChild(g1);
+      var g2 = el("div", "grid2");
+      g2.appendChild(campo("Máx. ingredientes", "number", s.max, function (v) { s.max = Math.max(1, parseInt(v, 10) || 1); guardarDatos(); }));
+      g2.appendChild(campo("Foto (ruta)", "text", s.img, function (v) { s.img = v; guardarDatos(); pintarTamanos(); }));
+      campos.appendChild(g2);
+      campos.appendChild(campo("Texto del pedido en WhatsApp", "text", s.pedido, function (v) { s.pedido = v; guardarDatos(); }));
+      campos.appendChild(campo("Descripción", "text", s.note, function (v) { s.note = v; guardarDatos(); }));
+      fila.appendChild(campos);
+      c.appendChild(fila);
+      cont.appendChild(c);
+    });
+  }
+
+  $("nuevoTamano").addEventListener("click", function () {
+    var id = "tam" + Date.now();
+    datos.tamanos.push({ id: id, label: "Tamaño nuevo", pedido: "tamaño nuevo", max: 2, price: "Cotizar", note: "", img: (datos.galeria[0] || {}).img || "" });
+    guardarDatos(); pintarTamanos(); llenarSelectTamanos(); toast("Tamaño agregado");
+  });
+
+  /* ============ INGREDIENTES ============ */
+  function slug(s) {
+    return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "").slice(0, 20) || ("ing" + Date.now());
+  }
+  function pintarIng() {
+    var cont = $("listaIng"); cont.textContent = "";
+    var tabla = el("table");
+    var thead = el("thead");
+    var tr = el("tr");
+    ["Ingrediente", "Colores", "Se usa en", ""].forEach(function (h) { tr.appendChild(el("th", null, h)); });
+    thead.appendChild(tr); tabla.appendChild(thead);
+    var tb = el("tbody");
+    (datos.ordenFrutas || []).forEach(function (id) {
+      var f = datos.frutas[id]; if (!f) return;
+      var r = el("tr");
+      var c1 = el("td");
+      var et = el("span", "chip on", f.label);
+      et.style.background = f.bg; et.style.color = f.fg; et.style.cursor = "default";
+      c1.appendChild(et);
+      r.appendChild(c1);
+
+      var c2 = el("td");
+      var i1 = document.createElement("input"); i1.type = "color"; i1.value = f.bg; i1.style.width = "52px"; i1.style.minHeight = "34px"; i1.style.padding = "2px";
+      var i2 = document.createElement("input"); i2.type = "color"; i2.value = f.fg; i2.style.width = "52px"; i2.style.minHeight = "34px"; i2.style.padding = "2px";
+      i1.addEventListener("change", function () { f.bg = i1.value; guardarDatos(); pintarIng(); pintarTartas(); });
+      i2.addEventListener("change", function () { f.fg = i2.value; guardarDatos(); pintarIng(); pintarTartas(); });
+      c2.appendChild(i1); c2.appendChild(i2);
+      r.appendChild(c2);
+
+      var usos = datos.tartas.filter(function (t) { return (t.fruits || []).indexOf(id) !== -1; }).length;
+      r.appendChild(el("td", null, usos + (usos === 1 ? " tarta" : " tartas")));
+
+      var c4 = el("td");
+      c4.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
+        if (usos) { alert("No se puede borrar: se usa en " + usos + " tarta(s). Quítalo de esas tartas primero."); return; }
+        if (!confirm("¿Borrar «" + f.label + "»?")) return;
+        delete datos.frutas[id];
+        datos.ordenFrutas = datos.ordenFrutas.filter(function (x) { return x !== id; });
+        guardarDatos(); pintarIng(); pintarPedidoFrutas();
+      }));
+      r.appendChild(c4);
+      tb.appendChild(r);
+    });
+    tabla.appendChild(tb);
+    var w = el("div", "scroll"); w.appendChild(tabla);
+    cont.appendChild(w);
+  }
+
+  $("addIng").addEventListener("click", function () {
+    var nombre = $("ingNombre").value.trim();
+    if (!nombre) { toast("Escribe el nombre del ingrediente"); return; }
+    var id = slug(nombre);
+    if (datos.frutas[id]) { toast("Ya existe un ingrediente con ese nombre"); return; }
+    datos.frutas[id] = { label: nombre, bg: $("ingBg").value, fg: $("ingFg").value };
+    datos.ordenFrutas.push(id);
+    guardarDatos(); pintarIng(); pintarPedidoFrutas(); pintarTartas();
+    $("ingNombre").value = "";
+    toast("Ingrediente agregado");
+  });
+
+  /* ============ FOTOS ============ */
+  function pintarFotos() {
+    var cont = $("listaFotos"); cont.textContent = "";
+    var vistas = {};
+    datos.tartas.forEach(function (t) { if (t.img) vistas[t.img] = (vistas[t.img] || 0) + 1; });
+    datos.tamanos.forEach(function (s) { if (s.img) vistas[s.img] = (vistas[s.img] || 0) + 1; });
+    (datos.galeria || []).forEach(function (g) { if (g.img) vistas[g.img] = (vistas[g.img] || 0) + 1; });
+    var wrap = el("div"); wrap.style.display = "flex"; wrap.style.flexWrap = "wrap"; wrap.style.gap = "10px";
+    Object.keys(vistas).sort().forEach(function (ruta) {
+      var b = el("div"); b.style.width = "112px";
+      var im = el("img"); im.src = verFoto(ruta); im.style.width = "112px"; im.style.height = "112px"; im.style.objectFit = "cover"; im.alt = "";
+      var t = el("div", null, ruta.replace("img/", "")); t.style.fontSize = "11px"; t.style.wordBreak = "break-all"; t.style.marginTop = "4px"; t.style.color = "#6B5B54";
+      b.appendChild(im); b.appendChild(t);
+      wrap.appendChild(b);
+    });
+    cont.appendChild(wrap);
+  }
+
+  $("fotoFile").addEventListener("change", function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var S = 900, cv = document.createElement("canvas");
+        cv.width = cv.height = S;
+        var ctx = cv.getContext("2d");
+        var lado = Math.min(im.width, im.height);
+        ctx.drawImage(im, (im.width - lado) / 2, (im.height - lado) / 2, lado, lado, 0, 0, S, S);
+        var url = cv.toDataURL("image/jpeg", 0.82);
+        var base = ($("fotoNombre").value.trim() || slug(f.name.replace(/\.[^.]+$/, "")) || "foto");
+        var ruta = "img/" + base + ".jpg";
+        fotosNuevas[ruta] = url;
+
+        var prev = $("fotoPrev"); prev.textContent = "";
+        var im2 = el("img"); im2.src = url; im2.style.width = "180px"; im2.style.height = "180px"; im2.style.objectFit = "cover"; im2.style.display = "block"; im2.style.marginBottom = "10px";
+        prev.appendChild(im2);
+        prev.appendChild(el("p", "sub", "Lista: cuadrada, 900×900. Se guardará como " + ruta));
+        var fila = el("div", "row-btns");
+        fila.appendChild(mkBtn("Descargar foto", "b-red", function () {
+          var a = document.createElement("a"); a.href = url; a.download = base + ".jpg"; a.click();
+          toast("Descargada. Súbela a la carpeta img/ del sitio.");
+        }));
+        fila.appendChild(mkBtn("Copiar la ruta", "b-line", function () {
+          try { navigator.clipboard.writeText(ruta); toast("Ruta copiada: " + ruta); }
+          catch (e) { prompt("Copia esta ruta:", ruta); }
+        }));
+        prev.appendChild(fila);
+        pintarFotos();
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(f);
+  });
+
+  /* ============ PEDIDOS ============ */
+  var pedidoFrutas = [];
+  function pintarPedidoFrutas() {
+    var max = 99;
+    var s = datos.tamanos.filter(function (x) { return x.id === $("pTamano").value; })[0];
+    if (s) max = s.max;
+    chipsFrutas($("pFrutas"), pedidoFrutas, function (id) {
+      if (pedidoFrutas.length < max) pedidoFrutas.push(id);
+      else toast("Ese tamaño lleva máximo " + max + " porciones");
+      pintarPedidoFrutas();
+    }, true);
+    $("pConteo").textContent = "— " + pedidoFrutas.length + " de " + max + " porciones (toca para sumar, borra abajo)";
+    var borra = el("button", "chip on", "Limpiar");
+    borra.type = "button"; borra.style.background = "#3B1E2B"; borra.style.color = "#FCE9AB";
+    borra.addEventListener("click", function () { pedidoFrutas = []; pintarPedidoFrutas(); });
+    if (pedidoFrutas.length) $("pFrutas").appendChild(borra);
+  }
+  function llenarSelectTamanos() {
+    var sel = $("pTamano"); var actual = sel.value; sel.textContent = "";
+    datos.tamanos.forEach(function (s) {
+      var o = document.createElement("option"); o.value = s.id; o.textContent = s.label + " · " + s.price;
+      sel.appendChild(o);
+    });
+    if (actual) sel.value = actual;
+    pintarPedidoFrutas();
+  }
+  document.getElementById("pTamano").addEventListener("change", function () {
+    var s = datos.tamanos.filter(function (x) { return x.id === this.value; }.bind(this))[0];
+    if (s && pedidoFrutas.length > s.max) pedidoFrutas = pedidoFrutas.slice(0, s.max);
+    pintarPedidoFrutas();
+  });
+
+  $("addPedido").addEventListener("click", function () {
+    var cant = Math.max(1, parseInt($("pCant").value, 10) || 1);
+    if (!pedidoFrutas.length && !confirm("No marcaste ingredientes. ¿Registrar de todos modos?")) return;
+    var nuevo = {
+      fecha: $("pFecha").value || hoy(),
+      cliente: $("pCliente").value.trim(),
+      tamano: $("pTamano").value,
+      cantidad: cant,
+      frutas: pedidoFrutas.slice(),
+      total: parseFloat($("pPrecio").value) || 0,
+      nota: $("pNota").value.trim()
+    };
+
+    function limpiarFormulario() {
+      pedidoFrutas = [];
+      $("pCliente").value = ""; $("pPrecio").value = ""; $("pNota").value = ""; $("pCant").value = "1";
+      pintarPedidoFrutas(); pintarPedidos(); toast("Pedido registrado");
+    }
+
+    if (DB.activo) {
+      DB.agregarPedido(nuevo).then(function (r) {
+        if (Array.isArray(r) && r[0]) { pedidos.unshift(normalizaPedido(r[0])); limpiarFormulario(); }
+        else toast("No se pudo guardar el pedido en la base de datos.");
+      });
+      return;
+    }
+    nuevo.id = Date.now();
+    pedidos.unshift(nuevo);
+    guardarPedidos();
+    limpiarFormulario();
+  });
+
+  function nombreTamano(id) {
+    var s = datos.tamanos.filter(function (x) { return x.id === id; })[0];
+    return s ? s.label : id;
+  }
+
+  function pintarPedidos() {
+    var cont = $("listaPedidos"); cont.textContent = "";
+    $("avisoPedidos").innerHTML = "<b>Cómo funciona.</b> La página no puede saber quién te escribió por WhatsApp: ese mensaje va del celular del cliente directo a tu teléfono, sin pasar por el sitio. Aquí registras cada pedido que te llega (toma unos segundos) y con eso el panel te saca los reportes de cuánta fruta usaste.";
+    if (!pedidos.length) { cont.appendChild(el("div", "empty", "Todavía no hay pedidos registrados.")); return; }
+    var tabla = el("table"), thead = el("thead"), tr = el("tr");
+    ["Fecha", "Cliente", "Tamaño", "Cant.", "Ingredientes", "Total", ""].forEach(function (h) { tr.appendChild(el("th", null, h)); });
+    thead.appendChild(tr); tabla.appendChild(thead);
+    var tb = el("tbody");
+    pedidos.forEach(function (p, i) {
+      var r = el("tr");
+      r.appendChild(el("td", null, p.fecha));
+      r.appendChild(el("td", null, p.cliente || "—"));
+      r.appendChild(el("td", null, nombreTamano(p.tamano)));
+      r.appendChild(el("td", "num", String(p.cantidad)));
+      r.appendChild(el("td", null, p.frutas.map(function (f) { return (datos.frutas[f] || {}).label || f; }).join(", ") || "—"));
+      r.appendChild(el("td", "num", p.total ? "$" + p.total : "—"));
+      var c = el("td");
+      c.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
+        if (!confirm("¿Borrar este pedido?")) return;
+        if (DB.activo) {
+          DB.borrarPedido(p.id).then(function (ok) {
+            if (!ok) { toast("No se pudo borrar en la base de datos."); return; }
+            pedidos = pedidos.filter(function (x) { return x.id !== p.id; });
+            pintarPedidos();
+          });
+          return;
+        }
+        pedidos.splice(i, 1); guardarPedidos(); pintarPedidos();
+      }));
+      r.appendChild(c);
+      tb.appendChild(r);
+    });
+    tabla.appendChild(tb);
+    var w = el("div", "scroll"); w.appendChild(tabla); cont.appendChild(w);
+  }
+
+  /* ============ REPORTES ============ */
+  $("rPeriodo").addEventListener("change", pintarReporte);
+  function pintarReporte() {
+    var dias = parseInt($("rPeriodo").value, 10);
+    var desde = null;
+    if (dias > 0) { var d = new Date(); d.setDate(d.getDate() - dias); desde = d.toISOString().slice(0, 10); }
+    var sel = pedidos.filter(function (p) { return !desde || p.fecha >= desde; });
+
+    var cont = $("reporte"); cont.textContent = "";
+    if (!sel.length) { cont.appendChild(el("div", "empty", "No hay pedidos en este periodo.")); return; }
+
+    var porFruta = {}, porTamano = {}, tartas = 0, dinero = 0;
+    sel.forEach(function (p) {
+      tartas += p.cantidad; dinero += p.total || 0;
+      porTamano[p.tamano] = (porTamano[p.tamano] || 0) + p.cantidad;
+      p.frutas.forEach(function (f) { porFruta[f] = (porFruta[f] || 0) + p.cantidad; });
+    });
+
+    var resumen = el("div", "card");
+    resumen.appendChild(el("h3", null, "Resumen"));
+    var ul = el("div"); ul.style.display = "flex"; ul.style.gap = "10px"; ul.style.flexWrap = "wrap"; ul.style.marginTop = "10px";
+    [["Tartas vendidas", tartas], ["Pedidos", sel.length], ["Total cobrado", "$" + dinero]].forEach(function (x) {
+      var b = el("div"); b.style.background = "#FCE9AB"; b.style.padding = "12px 16px"; b.style.minWidth = "130px";
+      var n = el("div", null, String(x[1])); n.style.fontFamily = "'Bodoni Moda',serif"; n.style.fontSize = "28px"; n.style.color = "#C42B34";
+      var t = el("div", null, x[0]); t.style.fontSize = "11px"; t.style.letterSpacing = ".14em"; t.style.textTransform = "uppercase"; t.style.color = "#6B5B54";
+      b.appendChild(n); b.appendChild(t); ul.appendChild(b);
+    });
+    resumen.appendChild(ul);
+    cont.appendChild(resumen);
+
+    cont.appendChild(tablaSimple("Ingredientes usados", ["Ingrediente", "Porciones"],
+      Object.keys(porFruta).sort(function (a, b) { return porFruta[b] - porFruta[a]; })
+        .map(function (f) { return [(datos.frutas[f] || {}).label || f, porFruta[f]]; })));
+
+    cont.appendChild(tablaSimple("Por tamaño", ["Tamaño", "Tartas"],
+      Object.keys(porTamano).sort(function (a, b) { return porTamano[b] - porTamano[a]; })
+        .map(function (s) { return [nombreTamano(s), porTamano[s]]; })));
+  }
+
+  function tablaSimple(titulo, cols, filas) {
+    var c = el("div", "card");
+    c.appendChild(el("h3", null, titulo));
+    var tabla = el("table"); tabla.style.marginTop = "10px";
+    var thead = el("thead"), tr = el("tr");
+    cols.forEach(function (h) { tr.appendChild(el("th", null, h)); });
+    thead.appendChild(tr); tabla.appendChild(thead);
+    var tb = el("tbody");
+    filas.forEach(function (f) {
+      var r = el("tr");
+      r.appendChild(el("td", null, String(f[0])));
+      r.appendChild(el("td", "num", String(f[1])));
+      tb.appendChild(r);
+    });
+    tabla.appendChild(tb);
+    var w = el("div", "scroll"); w.appendChild(tabla); c.appendChild(w);
+    return c;
+  }
+
+  /* ============ HISTORIAL ============ */
+  function pintarHistorial() {
+    var cont = $("listaHistorial"); cont.textContent = "";
+    var h = datos.historialPrecios || [];
+    if (!h.length) { cont.appendChild(el("div", "empty", "Todavía no has cambiado ningún precio.")); return; }
+    var tabla = el("table"), thead = el("thead"), tr = el("tr");
+    ["Fecha", "Qué", "Antes", "Ahora"].forEach(function (x) { tr.appendChild(el("th", null, x)); });
+    thead.appendChild(tr); tabla.appendChild(thead);
+    var tb = el("tbody");
+    h.forEach(function (x) {
+      var r = el("tr");
+      r.appendChild(el("td", null, x.fecha));
+      r.appendChild(el("td", null, x.que));
+      r.appendChild(el("td", null, x.antes));
+      var c = el("td"); c.appendChild(el("span", "pill-info", x.ahora)); r.appendChild(c);
+      tb.appendChild(r);
+    });
+    tabla.appendChild(tb);
+    var w = el("div", "scroll"); w.appendChild(tabla); cont.appendChild(w);
+  }
+
+  /* ============ PUBLICAR ============ */
+  $("dlDatos").addEventListener("click", function () {
+    descargar("datos.json", JSON.stringify(datos, null, 2));
+    toast("Sube este archivo al sitio para que se vean los cambios");
+  });
+  $("dlBackup").addEventListener("click", function () {
+    descargar("respaldo-madresota-" + hoy() + ".json", JSON.stringify({ datos: datos, pedidos: pedidos }, null, 2));
+  });
+  $("upBackup").addEventListener("change", function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var r = JSON.parse(fr.result);
+        if (r.datos) { datos = r.datos; guardarDatos(); }
+        if (r.pedidos) { pedidos = r.pedidos; guardarPedidos(); }
+        pintarTodo(); toast("Respaldo restaurado");
+      } catch (e) { alert("Ese archivo no se pudo leer."); }
+    };
+    fr.readAsText(f);
+  });
+  $("descartar").addEventListener("click", function () {
+    if (DB.activo) {
+      alert("Con la base de datos conectada no hay borrador que descartar: cada cambio ya quedó guardado. Si te equivocaste, corrígelo o restaura un respaldo.");
+      return;
+    }
+    if (!confirm("¿Descartar tus cambios y volver a como está el sitio publicado?")) return;
+    localStorage.removeItem(K_DATOS);
+    location.reload();
+  });
+  $("guardarContacto").addEventListener("click", function () {
+    var tel = $("cWa").value.replace(/\D/g, "");
+    var liga = $("cIg").value.trim();
+    if (tel.length < 10 || tel.length > 15) { alert("El WhatsApp debe traer entre 10 y 15 dígitos, con el 521 al inicio."); return; }
+    if (!/^https:\/\/[^\s"'<>]+$/i.test(liga)) { alert("La liga de Instagram debe empezar con https://"); return; }
+    datos.contacto = datos.contacto || {};
+    datos.contacto.whatsapp = tel;
+    datos.contacto.whatsappVisible = $("cWaV").value.trim().slice(0, 40);
+    datos.contacto.instagram = liga;
+    datos.contacto.instagramVisible = $("cIgV").value.trim().slice(0, 40);
+    guardarDatos(); toast("Contacto guardado");
+  });
+
+  /* ============ Arranque ============ */
+  function pintarModo() {
+    $("avisoModo").innerHTML = DB.activo
+      ? "<b>Conectado a la base de datos.</b> Todo lo que cambias aquí se ve en el sitio al instante, sin subir archivos. Las fotos nuevas sí hay que subirlas a la carpeta <b>img/</b>. Los botones de abajo sirven para sacar respaldos."
+      : "<b>Modo archivo.</b> Los cambios se guardan en <b>este dispositivo</b>. Para que el público los vea, descarga <b>datos.json</b> y súbelo al sitio, junto con las fotos nuevas si agregaste alguna.";
+  }
+
+  function pintarTodo() {
+    pintarModo();
+    pintarTartas(); pintarTamanos(); pintarIng(); pintarFotos();
+    llenarSelectTamanos(); pintarPedidos(); pintarHistorial();
+    var c = datos.contacto || {};
+    $("cWa").value = c.whatsapp || ""; $("cWaV").value = c.whatsappVisible || "";
+    $("cIg").value = c.instagram || ""; $("cIgV").value = c.instagramVisible || "";
+  }
+
+  function iniciar() {
+    datos.tartas = datos.tartas || []; datos.tamanos = datos.tamanos || [];
+    datos.frutas = datos.frutas || {}; datos.ordenFrutas = datos.ordenFrutas || Object.keys(datos.frutas);
+    datos.galeria = datos.galeria || []; datos.historialPrecios = datos.historialPrecios || [];
+    iniciarTabs();
+    $("pFecha").value = hoy();
+    pintarTodo();
+  }
+
+  // Con base de datos la sesión no se recuerda al recargar: hay que volver a
+  // entrar, que es lo correcto para un login de verdad.
+  try { if (!DB.activo && sessionStorage.getItem(K_SESION) === "1") abrir(); } catch (e) {}
+})();
+</script>
+</body>
+</html>

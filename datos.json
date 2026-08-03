@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "actualizado": "2026-08-03",
+  "contacto": {
+    "whatsapp": "5215573408147",
+    "whatsappVisible": "55 7340 8147",
+    "instagram": "https://www.instagram.com/tartas_la_madresota",
+    "instagramVisible": "@tartas_la_madresota"
+  },
+  "frutas": {
+    "fresa":     { "label": "Fresa",     "bg": "#C42B34", "fg": "#FCE9AB" },
+    "kiwi":      { "label": "Kiwi",      "bg": "#9E9820", "fg": "#FCE9AB" },
+    "arandano":  { "label": "Blueberry", "bg": "#6E3B6B", "fg": "#FCE9AB" },
+    "mango":     { "label": "Mango",     "bg": "#FCE9AB", "fg": "#C42B34" },
+    "durazno":   { "label": "Durazno",   "bg": "#FC8A2D", "fg": "#FCE9AB" },
+    "uva":       { "label": "Uva verde", "bg": "#C3BD52", "fg": "#5E5A0F" },
+    "zarzamora": { "label": "Zarzamora", "bg": "#8E2B54", "fg": "#FCE9AB" },
+    "frambuesa": { "label": "Frambuesa", "bg": "#F2799F", "fg": "#8E2B54" }
+  },
+  "ordenFrutas": ["fresa", "kiwi", "mango", "durazno", "arandano", "zarzamora", "uva", "frambuesa"],
+  "tamanos": [
+    { "id": "individual", "label": "Individual",    "pedido": "individual",       "max": 2, "price": "$50",     "note": "Redonda, porción personal.",            "img": "img/moradota.jpg" },
+    { "id": "barra",      "label": "Barra",         "pedido": "barra",            "max": 2, "price": "$50",     "note": "Rectangular, misma porción, alargada.", "img": "img/barras-kiwi.jpg" },
+    { "id": "mediana",    "label": "Mediana 25 cm", "pedido": "mediana de 25 cm", "max": 4, "price": "Cotizar", "note": "Redonda de 25 cm, para compartir.",     "img": "img/tarta-grande.jpg" },
+    { "id": "grande",     "label": "Grande 30 cm",  "pedido": "grande de 30 cm",  "max": 4, "price": "Cotizar", "note": "Redonda de 30 cm, de 6 a 8 porciones.", "img": "img/grande-arriba.jpg" }
+  ],
+  "tartas": [
+    { "name": "La Clásica",    "fruits": ["fresa", "kiwi"],                                "price": "$50",     "img": "img/clasica.jpg",         "pos": "50% 50%", "note": "" },
+    { "name": "Frutos Rojos",  "fruits": ["zarzamora", "frambuesa", "kiwi"],               "price": "$50",     "img": "img/frutos-rojos.jpg",    "pos": "50% 50%", "note": "" },
+    { "name": "La Azulita",    "fruits": ["fresa", "arandano"],                            "price": "$50",     "img": "img/barras-arandano.jpg", "pos": "38% 45%", "note": "" },
+    { "name": "La Tropical",   "fruits": ["mango", "durazno", "fresa"],                    "price": "2 × $60", "img": "img/mango-durazno.jpg",   "pos": "50% 55%", "note": "La mini de 8 cm. Solo se vende en par, no por pieza.", "pedido": "2 tartas La Tropical, las mini de 8 cm (el par)" },
+    { "name": "Verde y Roja",  "fruits": ["fresa", "uva"],                                 "price": "$50",     "img": "img/uva-fresa.jpg",       "pos": "45% 40%", "note": "" },
+    { "name": "La Moradota",   "fruits": ["zarzamora", "arandano", "kiwi"],                "price": "$50",     "img": "img/moradota.jpg",        "pos": "50% 50%", "note": "Toda de frutos azules, con su toque de kiwi." },
+    { "name": "Mitad y Mitad", "fruits": ["fresa", "zarzamora", "arandano"],               "price": "$50",     "img": "img/mitad.jpg",           "pos": "50% 45%", "note": "Mitad fresa, mitad frutos azules." },
+    { "name": "La Duraznera",  "fruits": ["durazno", "fresa", "uva"],                      "price": "$50",     "img": "img/duraznera.jpg",       "pos": "50% 55%", "note": "" },
+    { "name": "La Madresota",  "fruits": ["durazno", "kiwi", "fresa", "zarzamora", "uva"], "price": "Cotizar", "img": "img/g-tabla.jpg",         "pos": "50% 45%", "note": "" }
+  ],
+  "galeria": [
+    { "img": "img/g-pedestal.jpg",    "alt": "Tarta individual en pedestal de madera" },
+    { "img": "img/grande-arriba.jpg", "alt": "Tarta grande de fruta natural" },
+    { "img": "img/g-tabla.jpg",       "alt": "Dos tartas individuales en tabla de madera" },
+    { "img": "img/mango-durazno.jpg", "alt": "Tarta individual de mango y durazno" },
+    { "img": "img/g-macro.jpg",       "alt": "Acercamiento de zarzamora, blueberry y kiwi" },
+    { "img": "img/tabla-seis.jpg",    "alt": "Charola de tartas individuales" },
+    { "img": "img/g-copa.jpg",        "alt": "Tarta individual servida en copa de madera" },
+    { "img": "img/tarta-grande.jpg",  "alt": "Tarta grande lista para entregar" },
+    { "img": "img/g-plato.jpg",       "alt": "Tarta de durazno y tarta de frutos azules en plato" },
+    { "img": "img/caja.jpg",          "alt": "Tarta individual en caja para llevar" },
+    { "img": "img/g-mano.jpg",        "alt": "Tarta recién servida" },
+    { "img": "img/barras-kiwi.jpg",   "alt": "Barras individuales de fruta" }
+  ],
+  "faqs": [
+    { "q": "¿Con cuánta anticipación debo pedir?", "a": "Un día antes: domingo para las entregas del lunes, miércoles para las del jueves. Para la tarta grande, dos días es lo ideal." },
+    { "q": "¿A qué zonas entregan?", "a": "Entregamos en la Ciudad de México: Coyoacán y colonias cercanas. Si estás más lejos, escríbenos y lo vemos." },
+    { "q": "¿Puedo pedir cualquier combinación de fruta?", "a": "Sí, hasta cuatro frutas por tarta. Armamos tu combinación con lo que haya fresco ese día." },
+    { "q": "¿Cuánto duran y cómo las guardo?", "a": "Se disfrutan mejor el mismo día: duran unas 12 horas. Consérvalas en refrigeración y tapadas hasta el momento de servir, sin congelar." },
+    { "q": "¿Para cuántas personas es la tarta grande?", "a": "De 6 a 8 porciones, según cómo la partas. Perfecta para cumpleaños o reunión familiar." },
+    { "q": "¿Cómo puedo pagar?", "a": "Efectivo al entregar o transferencia. Para pedidos grandes te pedimos un anticipo." }
+  ],
+  "historialPrecios": []
+}
