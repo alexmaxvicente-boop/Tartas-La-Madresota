@@ -29,8 +29,8 @@
 window.MADRESOTA_CONFIG = {
 
   /* --- Supabase (público por diseño) --- */
-  supabaseUrl: "",
-  supabaseKey: "",
+  supabaseUrl: "https://pmngmlcquqsenzfhjtgh.supabase.co",
+  supabaseKey: "sb_publishable_NzOA3QSWeE4F8hMprtXixA_JB_EbaD_",
 
   // El usuario del panel se vuelve correo para el login de Supabase.
   // "YazminAmoAlexis" → "yazminamoalexis@tartaslamadresota.mx"

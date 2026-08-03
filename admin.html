@@ -313,8 +313,88 @@
       return fetch(this.url + "/rest/v1/pedidos?id=eq." + encodeURIComponent(id), {
         method: "DELETE", headers: this.cab()
       }).then(function (r) { return r.ok; });
+    },
+    // Sube la foto ya recortada y devuelve su dirección pública.
+    subirFoto: function (nombre, blob) {
+      var ruta = "fotos/" + Date.now() + "-" + nombre + ".jpg";
+      var self = this;
+      return fetch(this.url + "/storage/v1/object/" + ruta, {
+        method: "POST",
+        headers: {
+          apikey: this.key,
+          Authorization: "Bearer " + (this.token || this.key),
+          "Content-Type": "image/jpeg",
+          "x-upsert": "true"
+        },
+        body: blob
+      }).then(function (r) {
+        if (!r.ok) return null;
+        return self.url + "/storage/v1/object/public/" + ruta;
+      }).catch(function () { return null; });
     }
   };
+
+  /* Convierte una imagen en un cuadro de 900×900 comprimido. */
+  function prepararFoto(archivo) {
+    return new Promise(function (resolve, reject) {
+      var fr = new FileReader();
+      fr.onerror = reject;
+      fr.onload = function () {
+        var im = new Image();
+        im.onerror = reject;
+        im.onload = function () {
+          var S = 900, cv = document.createElement("canvas");
+          cv.width = cv.height = S;
+          var ctx = cv.getContext("2d");
+          var lado = Math.min(im.width, im.height);
+          ctx.drawImage(im, (im.width - lado) / 2, (im.height - lado) / 2, lado, lado, 0, 0, S, S);
+          cv.toBlob(function (blob) {
+            resolve({ blob: blob, url: cv.toDataURL("image/jpeg", 0.82) });
+          }, "image/jpeg", 0.82);
+        };
+        im.src = fr.result;
+      };
+      fr.readAsDataURL(archivo);
+    });
+  }
+
+  /* Botón "Cambiar foto" que se puede colgar de cualquier tarjeta. */
+  function botonFoto(obj, nombreBase, alTerminar) {
+    var lab = el("label", "b-line b-sm");
+    lab.style.display = "inline-flex";
+    lab.style.alignItems = "center";
+    lab.style.cursor = "pointer";
+    lab.style.margin = "0";
+    lab.appendChild(document.createTextNode(DB.activo ? "Cambiar foto" : "Cambiar foto (descarga)"));
+    var inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none";
+    lab.appendChild(inp);
+
+    inp.addEventListener("change", function () {
+      var f = inp.files && inp.files[0]; if (!f) return;
+      toast("Preparando la foto…");
+      prepararFoto(f).then(function (res) {
+        var base = slug(nombreBase) || "foto";
+        if (DB.activo) {
+          toast("Subiendo…");
+          return DB.subirFoto(base, res.blob).then(function (url) {
+            if (!url) { toast("No se pudo subir la foto."); return; }
+            obj.img = url;
+            guardarDatos(); alTerminar();
+            toast("Foto cambiada y publicada");
+          });
+        }
+        // Sin base de datos: se descarga para subirla a mano
+        var ruta = "img/" + base + ".jpg";
+        fotosNuevas[ruta] = res.url;
+        obj.img = ruta;
+        guardarDatos(); alTerminar();
+        var a = document.createElement("a"); a.href = res.url; a.download = base + ".jpg"; a.click();
+        toast("Descargada. Súbela a la carpeta img/ del sitio.");
+      }).catch(function () { toast("No se pudo leer esa imagen."); });
+    });
+    return lab;
+  }
 
   /* ============ SHA-256 (sin dependencias, funciona también en file://) ============ */
   function sha256(ascii) {
@@ -598,6 +678,7 @@
       var btns = el("div", "row-btns");
       if (i > 0) btns.appendChild(mkBtn("↑", "b-line b-sm", function () { mover(datos.tartas, i, -1); guardarDatos(); pintarTartas(); }));
       if (i < datos.tartas.length - 1) btns.appendChild(mkBtn("↓", "b-line b-sm", function () { mover(datos.tartas, i, 1); guardarDatos(); pintarTartas(); }));
+      btns.appendChild(botonFoto(t, t.name, pintarTartas));
       btns.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
         if (confirm("¿Borrar «" + t.name + "» del menú?")) { datos.tartas.splice(i, 1); guardarDatos(); pintarTartas(); toast("Tarta borrada"); }
       }));
@@ -667,6 +748,7 @@
       var btns = el("div", "row-btns");
       if (i > 0) btns.appendChild(mkBtn("↑", "b-line b-sm", function () { mover(datos.tamanos, i, -1); guardarDatos(); pintarTamanos(); }));
       if (i < datos.tamanos.length - 1) btns.appendChild(mkBtn("↓", "b-line b-sm", function () { mover(datos.tamanos, i, 1); guardarDatos(); pintarTamanos(); }));
+      btns.appendChild(botonFoto(s, s.label, pintarTamanos));
       btns.appendChild(mkBtn("Borrar", "b-warn b-sm", function () {
         if (confirm("¿Borrar el tamaño «" + s.label + "»?")) { datos.tamanos.splice(i, 1); guardarDatos(); pintarTamanos(); llenarSelectTamanos(); }
       }));
@@ -781,39 +863,56 @@
 
   $("fotoFile").addEventListener("change", function () {
     var f = this.files && this.files[0]; if (!f) return;
-    var fr = new FileReader();
-    fr.onload = function () {
-      var im = new Image();
-      im.onload = function () {
-        var S = 900, cv = document.createElement("canvas");
-        cv.width = cv.height = S;
-        var ctx = cv.getContext("2d");
-        var lado = Math.min(im.width, im.height);
-        ctx.drawImage(im, (im.width - lado) / 2, (im.height - lado) / 2, lado, lado, 0, 0, S, S);
-        var url = cv.toDataURL("image/jpeg", 0.82);
-        var base = ($("fotoNombre").value.trim() || slug(f.name.replace(/\.[^.]+$/, "")) || "foto");
-        var ruta = "img/" + base + ".jpg";
-        fotosNuevas[ruta] = url;
+    var base = ($("fotoNombre").value.trim() || slug(f.name.replace(/\.[^.]+$/, "")) || "foto");
+    var prev = $("fotoPrev");
+    prev.textContent = "";
+    prev.appendChild(el("p", "sub", "Preparando la foto…"));
 
-        var prev = $("fotoPrev"); prev.textContent = "";
-        var im2 = el("img"); im2.src = url; im2.style.width = "180px"; im2.style.height = "180px"; im2.style.objectFit = "cover"; im2.style.display = "block"; im2.style.marginBottom = "10px";
-        prev.appendChild(im2);
-        prev.appendChild(el("p", "sub", "Lista: cuadrada, 900×900. Se guardará como " + ruta));
-        var fila = el("div", "row-btns");
-        fila.appendChild(mkBtn("Descargar foto", "b-red", function () {
-          var a = document.createElement("a"); a.href = url; a.download = base + ".jpg"; a.click();
-          toast("Descargada. Súbela a la carpeta img/ del sitio.");
-        }));
-        fila.appendChild(mkBtn("Copiar la ruta", "b-line", function () {
-          try { navigator.clipboard.writeText(ruta); toast("Ruta copiada: " + ruta); }
-          catch (e) { prompt("Copia esta ruta:", ruta); }
-        }));
-        prev.appendChild(fila);
-        pintarFotos();
-      };
-      im.src = fr.result;
-    };
-    fr.readAsDataURL(f);
+    prepararFoto(f).then(function (res) {
+      prev.textContent = "";
+      var im2 = el("img");
+      im2.src = res.url;
+      im2.style.width = "180px"; im2.style.height = "180px";
+      im2.style.objectFit = "cover"; im2.style.display = "block"; im2.style.marginBottom = "10px";
+      prev.appendChild(im2);
+
+      if (DB.activo) {
+        prev.appendChild(el("p", "sub", "Cuadrada 900×900. Subiendo al sitio…"));
+        DB.subirFoto(slug(base), res.blob).then(function (url) {
+          prev.removeChild(prev.lastChild);
+          if (!url) { prev.appendChild(el("p", "sub", "No se pudo subir. Revisa que corriste el SQL del almacén de fotos.")); return; }
+          fotosNuevas[url] = res.url;
+          prev.appendChild(el("p", "sub", "Lista y publicada. Ya la puedes elegir en cualquier tarta."));
+          var fila = el("div", "row-btns");
+          fila.appendChild(mkBtn("Copiar la dirección", "b-line", function () {
+            try { navigator.clipboard.writeText(url); toast("Dirección copiada"); }
+            catch (e) { prompt("Copia esta dirección:", url); }
+          }));
+          prev.appendChild(fila);
+          pintarFotos();
+          toast("Foto publicada");
+        });
+        return;
+      }
+
+      var ruta = "img/" + base + ".jpg";
+      fotosNuevas[ruta] = res.url;
+      prev.appendChild(el("p", "sub", "Cuadrada 900×900. Se guardará como " + ruta));
+      var fila = el("div", "row-btns");
+      fila.appendChild(mkBtn("Descargar foto", "b-red", function () {
+        var a = document.createElement("a"); a.href = res.url; a.download = base + ".jpg"; a.click();
+        toast("Descargada. Súbela a la carpeta img/ del sitio.");
+      }));
+      fila.appendChild(mkBtn("Copiar la ruta", "b-line", function () {
+        try { navigator.clipboard.writeText(ruta); toast("Ruta copiada: " + ruta); }
+        catch (e) { prompt("Copia esta ruta:", ruta); }
+      }));
+      prev.appendChild(fila);
+      pintarFotos();
+    }).catch(function () {
+      prev.textContent = "";
+      prev.appendChild(el("p", "sub", "No se pudo leer esa imagen."));
+    });
   });
 
   /* ============ PEDIDOS ============ */
@@ -1046,8 +1145,12 @@
   /* ============ Arranque ============ */
   function pintarModo() {
     $("avisoModo").innerHTML = DB.activo
-      ? "<b>Conectado a la base de datos.</b> Todo lo que cambias aquí se ve en el sitio al instante, sin subir archivos. Las fotos nuevas sí hay que subirlas a la carpeta <b>img/</b>. Los botones de abajo sirven para sacar respaldos."
+      ? "<b>Conectado.</b> Todo lo que cambias aquí —precios, textos y fotos— se ve en el sitio al instante. No hay que subir ningún archivo. Los botones de abajo sirven solo para sacar respaldos."
       : "<b>Modo archivo.</b> Los cambios se guardan en <b>este dispositivo</b>. Para que el público los vea, descarga <b>datos.json</b> y súbelo al sitio, junto con las fotos nuevas si agregaste alguna.";
+    var t = document.querySelector('section[data-page="fotos"] .sub');
+    if (t) t.textContent = DB.activo
+      ? "Sube una foto y aquí se recorta a cuadro, se comprime y se publica sola. También puedes cambiar la foto de una tarta desde su botón «Cambiar foto»."
+      : "Sube una foto y aquí se recorta a cuadro y se comprime. Después descárgala y súbela a la carpeta img/ del sitio.";
   }
 
   function pintarTodo() {

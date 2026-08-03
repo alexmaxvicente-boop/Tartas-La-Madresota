@@ -132,7 +132,44 @@ create policy "pedidos borrar los propios"
   using (owner = auth.uid());
 
 -- ============================================================
---  3) Comprobación
+--  3) Almacén de fotos
+--  Para que la dueña suba imágenes desde el panel sin que nadie
+--  tenga que meterlas al hosting a mano.
+-- ============================================================
+
+insert into storage.buckets (id, name, public)
+values ('fotos', 'fotos', true)
+on conflict (id) do update set public = true;
+
+-- Ver las fotos: cualquiera. Las muestra la página pública.
+drop policy if exists "fotos lectura publica" on storage.objects;
+create policy "fotos lectura publica"
+  on storage.objects for select
+  to anon, authenticated
+  using (bucket_id = 'fotos');
+
+-- Subir, reemplazar y borrar: solo la dueña.
+drop policy if exists "fotos sube la duena" on storage.objects;
+create policy "fotos sube la duena"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'fotos' and public.es_duena());
+
+drop policy if exists "fotos reemplaza la duena" on storage.objects;
+create policy "fotos reemplaza la duena"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'fotos' and public.es_duena())
+  with check (bucket_id = 'fotos' and public.es_duena());
+
+drop policy if exists "fotos borra la duena" on storage.objects;
+create policy "fotos borra la duena"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'fotos' and public.es_duena());
+
+-- ============================================================
+--  4) Comprobación
 --  Las dos tablas deben salir con rowsecurity = true.
 -- ============================================================
 select tablename, rowsecurity
