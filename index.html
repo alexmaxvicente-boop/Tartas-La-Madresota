@@ -25,6 +25,8 @@
   a { color: #C42B34; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; }
   img { display: block; }
+  /* Sin esto, cualquier regla con display: propio ignora el atributo hidden. */
+  [hidden] { display: none !important; }
 
   @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @keyframes spin  { to { transform: rotate(360deg); } }
@@ -150,6 +152,24 @@
   }
   .step-label span { color: #9E9820; }
   .step-help { font-size: 13px; line-height: 1.45; color: #9E9820; margin: 0 0 12px; }
+
+  /* Renglón del paso 2 con su botón de limpiar a la derecha */
+  .step-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; margin: 0 0 4px;
+  }
+  .step-head .step-label { margin: 0; }
+  .btn-limpiar-fruta {
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 36px; padding: 8px 13px;
+    border: 1.5px solid #C42B34; background: transparent; color: #C42B34;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    background-image: linear-gradient(#C42B34, #C42B34);
+    background-repeat: no-repeat; background-position: left center; background-size: 0% 100%;
+    transition: background-size 280ms cubic-bezier(.2,.85,.2,1), color 200ms ease, transform 120ms ease;
+  }
+  .btn-limpiar-fruta:hover, .btn-limpiar-fruta:focus-visible { background-size: 100% 100%; color: #FCE9AB; }
+  .btn-limpiar-fruta:active { transform: translateY(2px); }
   .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
   .pill {
@@ -233,9 +253,30 @@
   /* Sobre el rojo de la sección, la etiqueta de fresa es del mismo color:
      un filo delgado la mantiene legible sin cambiar la paleta. */
   .menu .chip { box-shadow: 0 0 0 1.5px rgba(252,233,171,0.55); }
-  button.chip { cursor: pointer; padding: 6px 10px; transition: opacity 180ms ease, transform 120ms ease; }
-  button.chip:hover { opacity: 0.8; }
+  /* Etiqueta que SÍ se puede quitar: lleva su tachita visible. */
+  button.chip {
+    cursor: pointer; padding: 6px 8px 6px 11px; gap: 7px;
+    transition: opacity 180ms ease, transform 120ms ease, box-shadow 180ms ease;
+  }
+  button.chip .x {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 999px;
+    background: rgba(0,0,0,0.20); font-size: 11px; line-height: 1;
+    transition: background-color 160ms ease;
+  }
+  button.chip:hover { box-shadow: 0 0 0 2px rgba(252,233,171,0.75); }
+  button.chip:hover .x { background: rgba(0,0,0,0.45); }
   button.chip:active { transform: translateY(2px); }
+
+  .quitar-hint { margin: -8px 0 0; font-size: 12.5px; line-height: 1.4; color: rgba(252,233,171,0.9); }
+  .quitar-hint b { font-size: 13.5px; }
+  .btn-limpiar {
+    align-self: flex-start; border: 0; background: transparent; color: rgba(252,233,171,0.9);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 6px 0; text-decoration: underline; text-underline-offset: 3px;
+    transition: color 160ms ease;
+  }
+  .btn-limpiar:hover { color: #FCE9AB; }
 
   /* ---------- Menú: las seis ---------- */
   .menu { background: #C42B34; padding: 58px 22px; }
@@ -420,7 +461,12 @@
           <div class="pill-row" id="sizeRow"></div>
         </div>
         <div>
-          <p class="step-label">2 · Fruta <span>— <span id="pickedCount">0</span> de <span id="maxCount">2</span> porciones</span></p>
+          <div class="step-head">
+            <p class="step-label">2 · Fruta <span>— <span id="pickedCount">0</span> de <span id="maxCount">2</span> porciones</span></p>
+            <button type="button" class="btn-limpiar-fruta" id="limpiarFruta" hidden>
+              <span aria-hidden="true">✕</span> Limpiar
+            </button>
+          </div>
           <p class="step-help" id="stepHelp">Toca una fruta para agregar porción. Puedes repetirla hasta llenar las dos.</p>
           <div class="pill-row" id="fruitRow"></div>
         </div>
@@ -430,7 +476,9 @@
         <p class="step-label">3 · Tu tarta</p>
         <img class="round-photo" id="previewImg" src="img/caja.jpg" width="1000" height="1000" alt="Vista previa de tu tarta">
         <h3 id="buildName"></h3>
+        <p class="quitar-hint" id="quitarHint" hidden>¿Te equivocaste? Toca la <b>✕</b> de un ingrediente para quitarlo y elegir otro.</p>
         <div class="chip-row" id="pickedChips"></div>
+        <button type="button" class="btn-limpiar" id="limpiarTodo" hidden>Quitar todos</button>
         <div class="price-row">
           <span class="price" id="buildPrice"></span>
           <button type="button" class="btn-add" id="addBtn">Agregar otra</button>
@@ -658,7 +706,11 @@
     n.style.setProperty("--chip-fg", f.fg);
     if (onClick) {
       n.type = "button";
-      n.title = "Quitar una porción";
+      n.title = "Quitar " + label;
+      n.setAttribute("aria-label", "Quitar " + label);
+      var x = el("span", "x", "✕");
+      x.setAttribute("aria-hidden", "true");
+      n.appendChild(x);
       n.addEventListener("click", onClick);
     }
     return n;
@@ -809,10 +861,15 @@
     uniq.forEach(function (f) {
       chipsRow.appendChild(chip(f, FRUIT[f].label + (c[f] > 1 ? " ×" + c[f] : ""), function () { removeFruit(f); }));
     });
+    // La pista y los botones de limpiar solo aparecen si ya eligió algo.
+    var hayFruta = state.picked.length > 0;
+    document.getElementById("quitarHint").hidden = !hayFruta;
+    document.getElementById("limpiarTodo").hidden = !hayFruta;
+    document.getElementById("limpiarFruta").hidden = !hayFruta;
 
     document.getElementById("buildPrice").textContent = priceLabel(size.price);
     document.getElementById("buildHint").textContent = size.note + (full
-      ? " Ya tienes las " + NUM[max] + " porciones: toca una etiqueta para quitarla."
+      ? " Ya tienes las " + NUM[max] + " porciones."
       : " Toca una fruta dos veces para que lleve doble porción.");
 
     // Botón "Agregar otra": solo sirve si la tarta actual ya tiene fruta
@@ -986,6 +1043,14 @@
     document.getElementById("waFloat").href = general;
     document.getElementById("waFooter").href = general;
     document.getElementById("addBtn").addEventListener("click", addToOrder);
+  // Limpia SOLO la tarta que se está armando. Las que ya están en
+  // "Tu pedido" (state.order) no se tocan.
+  function limpiarFrutaActual() {
+    state.picked = [];
+    renderBuilder();
+  }
+  document.getElementById("limpiarTodo").addEventListener("click", limpiarFrutaActual);
+  document.getElementById("limpiarFruta").addEventListener("click", limpiarFrutaActual);
 
     renderBuilder();
     renderMenu();
